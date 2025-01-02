@@ -1,21 +1,19 @@
-#ifndef COMPUTE_H
-#define COMPUTE_H
+#ifndef COMMUNICATION_H
+#define COMMUNICATION_H
 
-class Compute{
+class Communication{
     public:
-        Compute(float* sizes, float flops, float padding);
+        Communication(float* sizes, float bandwidth, float padding);
         float get_size(int index);
-        float get_flops();
+        float get_bandwidth();
         float get_padding();
         void set_size(float size, int index);
-        void set_flops(float flops);
+        void set_bandwidth(float bandwidth);
         void set_padding(float padding);
-        
     private:
         float sizes[2];  // mm
-        float flops; // float operations per second
+        float bandwidth; // TB/s
         float padding;   // mm
-
 };
 
 #endif
