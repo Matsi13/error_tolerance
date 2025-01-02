@@ -4,9 +4,10 @@
 class Communication{
     public:
         Communication(float* sizes, float bandwidth, float padding);
-        float get_size(int index);
-        float get_bandwidth();
-        float get_padding();
+        Communication(const Communication &obj);
+        const float get_size(int index)const;
+        const float get_bandwidth()const;
+        const float get_padding()const;
         void set_size(float size, int index);
         void set_bandwidth(float bandwidth);
         void set_padding(float padding);

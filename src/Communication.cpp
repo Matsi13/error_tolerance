@@ -8,15 +8,22 @@ Communication::Communication(float* sizes, float bandwidth, float padding){
     this->padding = padding;
 }
 
-float Communication::get_size(int index){
+Communication::Communication(const Communication &obj){
+    this->sizes[0] = obj.get_size(0);
+    this->sizes[1] = obj.get_size(1);
+    this->bandwidth = obj.get_bandwidth();
+    this->padding = obj.get_padding();
+}
+
+const float Communication::get_size(int index)const{
     return sizes[index];
 }
 
-float Communication::get_bandwidth(){
+const float Communication::get_bandwidth()const{
     return bandwidth;
 }
 
-float Communication::get_padding(){
+const float Communication::get_padding()const{
     return padding;
 }
 

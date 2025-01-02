@@ -35,5 +35,14 @@ int main(){
     assert(HBM.get_capacity() == capacity);
     assert(HBM.get_padding() == padding);
 
+    Memory DRAM(HBM);
+
+    assert(DRAM.get_size(0) == sizes[0]);
+    assert(DRAM.get_size(1) == sizes[1]);
+    assert(DRAM.get_bandwidth() == bandwidth);
+    assert(DRAM.get_capacity() == capacity);
+    assert(DRAM.get_padding() == padding);
+
+
     return 0;
 }

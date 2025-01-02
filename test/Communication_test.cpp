@@ -30,5 +30,12 @@ int main(){
     assert(NoC.get_bandwidth() == bandwidth);
     assert(NoC.get_padding() == padding);
 
+    Communication NVLink(NoC);
+    assert(NVLink.get_size(0) == sizes[0]);
+    assert(NVLink.get_size(1) == sizes[1]);
+    assert(NVLink.get_bandwidth() == bandwidth);
+    assert(NVLink.get_padding() == padding);
+
+
     return 0;
 }

@@ -10,19 +10,28 @@ Memory::Memory(float* sizes, float bandwidth, float capacity, float padding){
     this->padding = padding;
 }
 
-float Memory::get_size(int index){
+Memory::Memory(const Memory &obj){
+    this->sizes[0] = obj.get_size(0);
+    this->sizes[1] = obj.get_size(1);
+    this->padding = obj.get_padding();
+    this->bandwidth = obj.get_bandwidth();
+    this->capacity = obj.get_capacity();
+}
+
+
+const float Memory::get_size(int index)const{
     return sizes[index];
 }
 
-float Memory::get_bandwidth(){
+const float Memory::get_bandwidth()const{
     return bandwidth;
 }
 
-float Memory::get_capacity(){
+const float Memory::get_capacity()const{
     return capacity;
 }
 
-float Memory::get_padding(){
+const float Memory::get_padding()const{
     return padding;
 }
 

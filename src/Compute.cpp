@@ -2,22 +2,29 @@
 
 using namespace std;
 
-Compute::Compute(float* sizes, float flops, float padding){
+Compute::Compute(float* sizes, float tflops, float padding){
     this->sizes[0] = sizes[0];
     this->sizes[1] = sizes[1];
-    this->flops = flops;
+    this->tflops = tflops;
     this->padding = padding;
 }
 
-float Compute::get_size(int index){
+Compute::Compute(const Compute &obj){
+    this->sizes[0] = obj.get_size(0);
+    this->sizes[1] = obj.get_size(1);
+    this->tflops = obj.get_tflops();
+    this->padding = obj.get_padding();
+}
+
+const float Compute::get_size(int index)const{
     return sizes[index];
 }
 
-float Compute::get_flops(){
-    return flops;
+const float Compute::get_tflops()const{
+    return tflops;
 }
 
-float Compute::get_padding(){
+const float Compute::get_padding()const{
     return padding;
 }
 
@@ -26,8 +33,8 @@ void Compute::set_size(float size, int index){
     return;
 }
 
-void Compute::set_flops(float flops){
-    this->flops = flops;
+void Compute::set_tflops(float tflops){
+    this->tflops = tflops;
     return;
 }
 
