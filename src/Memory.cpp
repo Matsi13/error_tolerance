@@ -18,6 +18,15 @@ Memory::Memory(const Memory &obj){
     this->capacity = obj.get_capacity();
 }
 
+Memory& Memory::operator = (const Memory &obj){
+    this->sizes[0] = obj.get_size(0);
+    this->sizes[1] = obj.get_size(1);
+    this->capacity = obj.get_capacity();
+    this->bandwidth = obj.get_bandwidth();
+    this->padding = obj.get_padding();
+    return *this;
+}
+
 
 const float Memory::get_size(int index)const{
     return sizes[index];

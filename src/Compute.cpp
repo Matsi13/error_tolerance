@@ -16,6 +16,14 @@ Compute::Compute(const Compute &obj){
     this->padding = obj.get_padding();
 }
 
+Compute& Compute::operator = (const Compute &obj){
+    this->sizes[0] = obj.get_size(0);
+    this->sizes[1] = obj.get_size(1);
+    this->tflops = obj.get_tflops();
+    this->padding = obj.get_padding();
+    return *this;
+}
+
 const float Compute::get_size(int index)const{
     return sizes[index];
 }

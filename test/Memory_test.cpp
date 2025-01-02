@@ -43,6 +43,24 @@ int main(){
     assert(DRAM.get_capacity() == capacity);
     assert(DRAM.get_padding() == padding);
 
+    // test operator =
+    
+    sizes[0] = 2;
+    sizes[1] = 4;
+    bandwidth = 20;
+    capacity = 5;
+    padding = 0.5;
+
+    Memory SRAM(sizes, bandwidth, capacity, padding);
+    SRAM = DRAM;
+    
+    assert(DRAM.get_size(0) == SRAM.get_size(0));
+    assert(DRAM.get_size(1) == SRAM.get_size(1));
+    assert(DRAM.get_bandwidth() == SRAM.get_bandwidth());
+    assert(DRAM.get_capacity() == SRAM.get_capacity());
+    assert(DRAM.get_padding() == SRAM.get_padding());
+
+
 
     return 0;
 }

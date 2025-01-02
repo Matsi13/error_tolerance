@@ -36,6 +36,18 @@ int main(){
     assert(NVLink.get_bandwidth() == bandwidth);
     assert(NVLink.get_padding() == padding);
 
+    sizes[0] = 1;
+    sizes[1] = 3;
+    bandwidth = 8;
+    padding = 0.2;
+
+    Communication Fiber(sizes, bandwidth, padding);
+    Fiber = NVLink;
+    assert(NVLink.get_size(0) == Fiber.get_size(0));
+    assert(NVLink.get_size(1) == Fiber.get_size(1));
+    assert(NVLink.get_bandwidth() == Fiber.get_bandwidth());
+    assert(NVLink.get_padding() == Fiber.get_padding());
+
 
     return 0;
 }

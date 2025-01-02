@@ -1,8 +1,7 @@
 #ifndef MACRO_H
 #define MACRO_H
 
-#define COMPUTE_UNIT 0
-#define MEMORY_UNIT 1
-#define COMMUNICATION_uNIT 2
+#define MEMORY_UNIT '0'
+#define COMMUNICATION_uNIT '1'
 
 #endif
