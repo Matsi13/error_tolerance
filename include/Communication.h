@@ -3,6 +3,7 @@
 
 class Communication{
     public:
+        Communication(){};
         Communication(float* sizes, float bandwidth, float padding);
         Communication(const Communication &obj);
 

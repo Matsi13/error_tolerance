@@ -3,6 +3,7 @@
 
 class Memory{
     public:
+        Memory(){};
         Memory(float* sizes, float bandwidth, float capacity, float padding);
         Memory(const Memory &obj);
         Memory& operator = (const Memory &obj);

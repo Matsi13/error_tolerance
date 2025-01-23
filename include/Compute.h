@@ -3,6 +3,7 @@
 
 class Compute{
     public:
+        Compute(){};
         Compute(float* sizes, float tflops, float padding);
         Compute(const Compute &obj);
 
@@ -18,7 +19,7 @@ class Compute{
 
         
     private:
-        float sizes[2];  // mm
+        float sizes[2];  // measured by mm. size[0] is the length, size[1] is the width
         float tflops; // tera float operations per second
         float padding;   // mm
 

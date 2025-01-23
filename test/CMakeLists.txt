@@ -10,3 +10,7 @@ add_executable(Communication_test Communication_test.cpp)
 target_link_libraries(Communication_test communication_lib)
 add_test(NAME Communication_test COMMAND Communication_test)
 
+add_executable(Die_test Die_test.cpp)
+target_link_libraries(Die_test Die_lib)
+add_test(NAME Die_test COMMAND Die_test)
+
