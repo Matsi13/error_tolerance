@@ -32,3 +32,12 @@ Communication.cpp
 Die.cpp
 Distance.cpp
 )
+
+add_library(scan_lib 
+Memory.cpp
+Compute.cpp
+Communication.cpp
+Die.cpp
+Permutation.cpp
+Scan.cpp
+)

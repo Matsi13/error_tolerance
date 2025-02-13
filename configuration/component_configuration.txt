@@ -1,0 +1,35 @@
+wafer length :
+120
+wafer width :
+120
+die padding :
+0.5
+relaxation :
+0
+available compute chip(s) :
+1
+sizes:
+16 12
+TFLOPS : 
+10
+padding :
+0
+available memory unit(s) :
+1
+sizes :
+5 5
+capacity : 
+4
+bandwidth :
+10
+padding : 
+0.1
+available communication unit(s) :
+1
+sizes :
+1 2
+bandwidth :
+10
+padding :
+0.1
+
