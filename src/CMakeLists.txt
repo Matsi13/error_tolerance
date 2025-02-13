@@ -10,7 +10,7 @@ add_library(communication_lib
 Communication.cpp
 )
 
-add_library(Die_lib 
+add_library(die_lib 
 Memory.cpp
 Compute.cpp
 Communication.cpp

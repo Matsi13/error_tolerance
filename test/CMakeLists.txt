@@ -11,6 +11,10 @@ target_link_libraries(Communication_test communication_lib)
 add_test(NAME Communication_test COMMAND Communication_test)
 
 add_executable(Die_test Die_test.cpp)
-target_link_libraries(Die_test Die_lib)
+target_link_libraries(Die_test die_lib)
 add_test(NAME Die_test COMMAND Die_test)
+
+add_executable(Permutation_test Permutation_test.cpp)
+target_link_libraries(Permutation_test permutation_lib)
+add_test(NAME Permutation_test COMMAND Permutation_test)
 

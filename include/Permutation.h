@@ -1,0 +1,23 @@
+#ifndef PERMUTATION_H
+#define PERMUTATION_H
+
+#include <string>
+#include <queue>
+#include <list>
+
+#include "Memory.h"
+#include "Communication.h"
+#include "Compute.h"
+#include "Die.h"
+
+using namespace std;
+
+
+void Search_permutation(list<string>& permutation_side, float Compute_size, float Memory_size, float Communication_size, float component_padding, float relaxation);
+
+bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_width);
+
+void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Die>& result, float relaxation, float wafer_length, float wafer_width);
+
+
+#endif

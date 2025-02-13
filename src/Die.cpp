@@ -597,4 +597,12 @@ void Die::set_permutation_right(string& new_permutation){
     
 }
 
+void Die::print(){
 
+    cout << "up: " << up << endl;
+    cout << "down" << down << endl;
+    cout << "left" << left << endl;
+    cout << "right" << right << endl;
+    return;
+    
+}

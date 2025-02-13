@@ -17,16 +17,17 @@ using namespace std;
 
 void Search_permutation(list<string>& permutation_side, float Compute_size, float Memory_size, float Communication_size, float component_padding, float relaxation){
     
-    queue<string> kdtree;
-    string origin = "";
-    kdtree.push(origin);
-    permutation_side.push_back(origin);
-        while(!kdtree.empty()){
-            string solution = kdtree.front();
-            kdtree.pop();
-            float current_size = 0;
+    queue<string> kdtree;  // search possible solutions in BFS pattern
+    string origin = "";    // initial solution : put nothing on this edge
+    kdtree.push(origin);   // save this in kdtree as the starting point
+    permutation_side.push_back(origin); // also, this is a feasible solution, save it to permutation_side
 
-            if(!solution.empty()){
+        while(!kdtree.empty()){  // when kdtree is empty, there won't be any new solutions, the search can be terminated
+            string solution = kdtree.front(); // get a solution, and try to find new solutions based on it
+            kdtree.pop();        // discard the original solution from kdtree, since it is already used up
+            float current_size = 0; // the curmulative length of the components on this edge
+
+            if(!solution.empty()){ // if this solution is not an empty string, calculate the curmulative length of the components on this edge
 
                 for (int i = 0; i < solution.size(); i++){
 
@@ -44,21 +45,22 @@ void Search_permutation(list<string>& permutation_side, float Compute_size, floa
 
                 }
 
-                current_size += (solution.size() - 1) * component_padding;
+                current_size += (solution.size() - 1) * component_padding; // add the padding length between each two components
             }
 
-            float remain_size = Compute_size - current_size + relaxation;
+            float remain_size = Compute_size - current_size + relaxation; // the remaining available length for new components
             assert(remain_size >= 0);
 
-            if (remain_size >= Memory_size + component_padding){
+            if (remain_size >= Memory_size + component_padding){  // whether a memory unit can be added
                 string new_solution = solution;
                 new_solution.push_back(MEMORY_UNIT);
-                sort(new_solution.begin(), new_solution.end());
-                kdtree.push(new_solution);
-                permutation_side.push_back(new_solution);
+                // order the string to avoid redundancy. For instance, 1010 and 0101 are the same after using sort function
+                sort(new_solution.begin(), new_solution.end());                
+                kdtree.push(new_solution); // add new solution to kdtree for future search
+                permutation_side.push_back(new_solution); // add this solution as a feasible solution
             }
 
-            if (remain_size >= Communication_size + component_padding){
+            if (remain_size >= Communication_size + component_padding){ // whether a communication unit can be added
                 string new_solution = solution;
                 new_solution.push_back(COMMUNICATION_UNIT);
                 sort(new_solution.begin(), new_solution.end());
@@ -69,7 +71,9 @@ void Search_permutation(list<string>& permutation_side, float Compute_size, floa
         }
 
     
-    permutation_side.unique();
+    permutation_side.unique();  // clear the redundant solutions
+
+    // cout << "search completed!" << endl;
 
     return;
 }
@@ -117,6 +121,8 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
 
     queue<Die> all_solutions;
 
+    // list all solutions based on feasible permutations
+
     for(auto idx_up = permutation_length.begin(); idx_up != permutation_length.end(); idx_up++){
         for (auto idx_down = permutation_length.begin(); idx_down != permutation_length.end(); idx_down++){
             for (auto idx_left = permutation_width.begin(); idx_left != permutation_width.end(); idx_left++){
@@ -131,43 +137,46 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
         }
     }
 
-    // clear the sub_optimal solutions
+    // put the first solution into List result
     result.push_back(all_solutions.front());
+    // remove this solution from all_solutions
     all_solutions.pop();
+    // if there is only one solution, it's optimal
     if(all_solutions.empty()) return;
 
     while (!all_solutions.empty()){
 
-        Die new_solution = all_solutions.front();
-        all_solutions.pop();
+        Die new_solution = all_solutions.front(); // get another solution from all_solutions
+        all_solutions.pop(); // remove it from all_solutions
         bool is_better = false; // if this is true, new_solution should be added to the final result
+        bool is_not_worse = true; // if this is true, new_solution should be added to the final result
 
         for (auto idx = result.begin(); idx != result.end(); idx++){
 
             Die current_solution = *idx;
             if (is_better_die(new_solution, current_solution, wafer_length, wafer_width)){
-                // new_solution is better than the origin one
-                is_better = true;
-                result.erase(idx);
+                // if new_solution is better than one of the existing solutions in List result, remove the latter
+                is_better = true; // new_solution will be added to List result later
+                idx = result.erase(idx);
                 idx--;
             } 
             
         }
 
-        if(!is_better){
-
+        if(!is_better){ 
+            // even if the new solution is not better than existing solutions, there's still possibility that the new solution is not worse than any existing solutions. Check whether the new solution provides a new comprehensive performance
             for (auto idx = result.begin(); idx != result.end(); idx++){
 
             Die current_solution = *idx;
             if (is_better_die(current_solution, new_solution, wafer_length, wafer_width)){
-                is_better = false; break;
+                is_not_worse = false; break;
             } 
             
         }
 
         }
 
-        if(is_better){
+        if(is_better || is_not_worse){
             result.push_back(new_solution);
         }
 

@@ -41,6 +41,8 @@ class Die{
         void set_permutation_left(string &new_permutation);
         void set_permutation_right(string &new_permutation);
 
+        void print();
+
     private:
         float sizes[2];
         float padding;
