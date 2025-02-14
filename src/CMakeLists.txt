@@ -17,6 +17,14 @@ Communication.cpp
 Die.cpp
 )
 
+add_library(wafer_lib 
+Memory.cpp
+Compute.cpp
+Communication.cpp
+Die.cpp
+Wafer.cpp
+)
+
 add_library(permutation_lib 
 Memory.cpp
 Compute.cpp
@@ -41,3 +49,4 @@ Die.cpp
 Permutation.cpp
 Scan.cpp
 )
+
