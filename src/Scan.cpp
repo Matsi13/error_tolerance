@@ -11,6 +11,8 @@
 
 using namespace std;
 
+
+// read the configs file and search for solutions
 void Scan(){
     ifstream input("D:\\VS projects\\error_tolerance\\configuration\\component_configuration.txt", ios::in);
     string title;
