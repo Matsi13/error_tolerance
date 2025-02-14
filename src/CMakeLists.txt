@@ -30,6 +30,7 @@ Memory.cpp
 Compute.cpp
 Communication.cpp
 Die.cpp
+Wafer.cpp
 Permutation.cpp
 )
 
@@ -38,6 +39,7 @@ Memory.cpp
 Compute.cpp
 Communication.cpp
 Die.cpp
+Wafer.cpp
 Distance.cpp
 )
 
@@ -46,6 +48,7 @@ Memory.cpp
 Compute.cpp
 Communication.cpp
 Die.cpp
+Wafer.cpp
 Permutation.cpp
 Scan.cpp
 )

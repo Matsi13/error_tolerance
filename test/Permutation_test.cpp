@@ -11,6 +11,7 @@
 #include "Compute.h"
 #include "Memory.h"
 #include "Die.h"
+#include "Wafer.h"
 #include "Permutation.h"
 #include "Distance.h"
 
@@ -38,7 +39,7 @@ int main(){
     float relaxation = 0;
     float wafer_length = 120;
     float wafer_width = 120;
-    list<Die> result;
+    list<Wafer> result;
     list<string> permutation_side;
 
     // Search_permutation(permutation_side, compute_sizes[0], memory_sizes[0], communication_sizes[0], memory_padding, relaxation);
@@ -55,7 +56,7 @@ int main(){
 
     for (auto idx = result.begin(); idx != result.end(); idx++){
 
-            Die current_solution = *idx;
+            Wafer current_solution = *idx;
             current_solution.print();
             
         }

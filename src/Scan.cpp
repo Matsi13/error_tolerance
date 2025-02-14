@@ -7,6 +7,7 @@
 #include "Memory.h"
 #include "Communication.h"
 #include "Die.h"
+#include "Wafer.h"
 #include "Permutation.h"
 
 using namespace std;
@@ -92,8 +93,8 @@ void Scan(){
     }
 
     input.close();
-    list<list<Die>> results_by_configs;
-    list<Die> result;
+    list<list<Wafer>> results_by_configs;
+    list<Wafer> result;
 
     for (auto compute_idx = compute_configs.begin(); compute_idx != compute_configs.end(); compute_idx++){
         for (auto memory_idx = memory_configs.begin(); memory_idx != memory_configs.end(); memory_idx++){

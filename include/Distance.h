@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "Die.h"
+#include "Wafer.h"
 #include "Distance.h"
 
 struct simulation_error{
@@ -25,8 +26,8 @@ struct solution_distance{
     float communication_bandwidth;
 };
 
-solution_distance calculate_distance(Die& first, Die& second, float wafer_length, float wafer_width);
+solution_distance calculate_distance(Wafer& first, Wafer& second);
 
-void Possible_optimal(queue<Die> solutions, Die& optimal, float wafer_length, float wafer_width, simulation_error& error, queue<Die>& possible_optimals);
+void Possible_optimal(queue<Wafer> solutions, Wafer& optimal, simulation_error& error, queue<Wafer>& possible_optimals);
 
 #endif

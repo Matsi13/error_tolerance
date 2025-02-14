@@ -7,23 +7,17 @@
 
 using namespace std;
 
-solution_distance calculate_distance(Die& first, Die& second, float wafer_length, float wafer_width){
+solution_distance calculate_distance(Wafer& first, Wafer& second){
 
-    float first_length = first.get_size(0);
-    float first_width = first.get_size(1);
-    int first_count = max(floor(wafer_length / first_length) * floor(wafer_width / first_width), floor(wafer_width / first_length) * floor(wafer_length / first_width));
-    float first_tflops = first.get_tflops() * first_count;
-    float first_capacity = first.get_capacity() * first_count;
-    float first_memory_bandwidth = first.get_memory_bandwidth() * first_count;
-    float first_communication_bandwidth = first.get_communication_bandwidth() * first_count;
+    float first_tflops = first.get_tflops();
+    float first_capacity = first.get_capacity();
+    float first_memory_bandwidth = first.get_memory_bandwidth();
+    float first_communication_bandwidth = first.get_communication_bandwidth();
 
-    float second_length = second.get_size(0);
-    float second_width = second.get_size(1);
-    int second_count = max(floor(wafer_length / second_length) * floor(wafer_width / second_width), floor(wafer_width / second_length) * floor(wafer_length / second_width));
-    float second_tflops = second.get_tflops() * second_count;
-    float second_capacity = second.get_capacity() * second_count;
-    float second_memory_bandwidth = second.get_memory_bandwidth() * second_count;
-    float second_communication_bandwidth = second.get_communication_bandwidth() * second_count;
+    float second_tflops = second.get_tflops();
+    float second_capacity = second.get_capacity();
+    float second_memory_bandwidth = second.get_memory_bandwidth();
+    float second_communication_bandwidth = second.get_communication_bandwidth();
 
     solution_distance result;
     result.tflops = first_tflops - second_tflops;
@@ -36,13 +30,13 @@ solution_distance calculate_distance(Die& first, Die& second, float wafer_length
 }
 
 
-void Possible_optimal(queue<Die> solutions, Die& optimal, float wafer_length, float wafer_width, simulation_error& error, queue<Die>& possible_optimals){
+void Possible_optimal(queue<Wafer> solutions, Wafer& optimal, simulation_error& error, queue<Wafer>& possible_optimals){
     
     while (!solutions.empty()){
 
-        Die possible_solution = solutions.front();
+        Wafer possible_solution = solutions.front();
         solutions.pop();
-        solution_distance distance2optimal = calculate_distance(possible_solution, optimal, wafer_length, wafer_width);
+        solution_distance distance2optimal = calculate_distance(possible_solution, optimal);
 
         float tflops_max = (1 + error.tflops_positive) * optimal.get_tflops();
         float tflops_min = (1 + error.tflops_negative) * optimal.get_tflops();

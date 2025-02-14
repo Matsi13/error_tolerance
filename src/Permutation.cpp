@@ -12,6 +12,7 @@
 #include "Communication.h"
 #include "Compute.h"
 #include "Die.h"
+#include "Wafer.h"
 
 using namespace std;
 
@@ -104,8 +105,28 @@ bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_widt
 
 }
 
+// return true is first is better than second, vice visa
+bool is_better_wafer(Wafer& first, Wafer& second){
 
-void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Die>& result, float relaxation, float wafer_length, float wafer_width){
+    
+    float first_tflops = first.get_tflops();
+    float first_capacity = first.get_capacity();
+    float first_memory_bandwidth = first.get_memory_bandwidth();
+    float first_communication_bandwidth = first.get_communication_bandwidth();
+
+    float second_tflops = second.get_tflops();
+    float second_capacity = second.get_capacity();
+    float second_memory_bandwidth = second.get_memory_bandwidth();
+    float second_communication_bandwidth = second.get_communication_bandwidth();
+
+    bool is_better = (first_tflops >= second_tflops) && (first_capacity >= second_capacity) && (first_memory_bandwidth >= second_memory_bandwidth) && (first_communication_bandwidth >= second_communication_bandwidth);
+
+    return is_better;
+
+}
+
+
+void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width){
 
     // relaxation allows the length of memory + communication to slightly overflow the length of Compute chip
     float Compute_length = Compute_unit.get_size(0);
@@ -113,13 +134,14 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
     float Memory_length = Memory_unit.get_size(0);
     float Communication_length = Communication_unit.get_size(0);
     float component_padding = max(Memory_unit.get_padding(), Communication_unit.get_padding());
+    float wafer_sizes[2] = {wafer_length, wafer_width};
 
     list<string> permutation_length;
     Search_permutation(permutation_length, Compute_length, Memory_length, Communication_length, component_padding, relaxation);
     list<string> permutation_width;
     Search_permutation(permutation_width, Compute_width, Memory_length, Communication_length, component_padding, relaxation);
 
-    queue<Die> all_solutions;
+    queue<Wafer> all_solutions;
 
     // list all solutions based on feasible permutations
 
@@ -129,7 +151,8 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
                 for (auto idx_right = permutation_width.begin(); idx_right != permutation_width.end(); idx_right++){
 
                     Die Die_instance(die_padding, Compute_unit, Memory_unit, Communication_unit, *idx_up, *idx_down, *idx_left, *idx_right);
-                    all_solutions.push(Die_instance);
+                    Wafer Wafer_instance(wafer_sizes, Die_instance);
+                    all_solutions.push(Wafer_instance);
 
                 }
             } 
@@ -146,15 +169,15 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
 
     while (!all_solutions.empty()){
 
-        Die new_solution = all_solutions.front(); // get another solution from all_solutions
+        Wafer new_solution = all_solutions.front(); // get another solution from all_solutions
         all_solutions.pop(); // remove it from all_solutions
         bool is_better = false; // if this is true, new_solution should be added to the final result
         bool is_not_worse = true; // if this is true, new_solution should be added to the final result
 
         for (auto idx = result.begin(); idx != result.end(); idx++){
 
-            Die current_solution = *idx;
-            if (is_better_die(new_solution, current_solution, wafer_length, wafer_width)){
+            Wafer current_solution = *idx;
+            if (is_better_wafer(new_solution, current_solution)){
                 // if new_solution is better than one of the existing solutions in List result, remove the latter
                 is_better = true; // new_solution will be added to List result later
                 idx = result.erase(idx);
@@ -167,8 +190,8 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
             // even if the new solution is not better than existing solutions, there's still possibility that the new solution is not worse than any existing solutions. Check whether the new solution provides a new comprehensive performance
             for (auto idx = result.begin(); idx != result.end(); idx++){
 
-            Die current_solution = *idx;
-            if (is_better_die(current_solution, new_solution, wafer_length, wafer_width)){
+            Wafer current_solution = *idx;
+            if (is_better_wafer(current_solution, new_solution)){
                 is_not_worse = false; break;
             } 
             

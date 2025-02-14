@@ -9,6 +9,7 @@
 #include "Communication.h"
 #include "Compute.h"
 #include "Die.h"
+#include "Wafer.h"
 
 using namespace std;
 
@@ -17,7 +18,9 @@ void Search_permutation(list<string>& permutation_side, float Compute_size, floa
 
 bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_width);
 
-void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Die>& result, float relaxation, float wafer_length, float wafer_width);
+bool is_better_wafer(Wafer& first, Wafer& second);
+
+void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width);
 
 
 #endif

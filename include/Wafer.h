@@ -7,7 +7,7 @@ using namespace std;
 
 class Wafer{
     public:
-        Wafer(){}
+        Wafer(){};
         Wafer(float* sizes, Die& die);
         Wafer(const Wafer& obj);
         void print(); // print the solution for later visulization
