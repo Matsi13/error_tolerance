@@ -26,7 +26,7 @@ Wafer::Wafer(const Wafer& obj){
 
 void Wafer::print(){
 
-    cout << tflops << capacity << memory_bandwidth << communication_bandwidth << endl;
+    cout << tflops<< " " << capacity << " " << memory_bandwidth << " " << communication_bandwidth << endl;
 
 }
 
