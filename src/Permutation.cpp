@@ -18,12 +18,103 @@
 
 using namespace std;
 
-void Search_permutation(list<string>& permutation_side, float Compute_size, float Memory_size, float Communication_size, float component_padding, float relaxation){
+// return ture if first is better than second
+bool is_better_permutation(string first, string second, Memory& Memory_unit, Communication& Communication_unit, float Compute_size){
+
+    float first_height = 0;
+    float first_length = 0;
+    float first_capacity = 0;
+    float first_memory_bandwidth = 0;
+    float first_communication_bandwidth = 0;
+
+    float second_height = 0;
+    float second_length = 0;
+    float second_capacity = 0;
+    float second_memory_bandwidth = 0;
+    float second_communication_bandwidth = 0;
+
+    float component_padding = max(Memory_unit.get_padding(), Communication_unit.get_padding());
+
+    if (!first.empty()){
+
+        for(int i = 0; i < first.size(); i++){
+
+            switch(first[i]){
+                case MEMORY_UNIT : {
+
+                    first_capacity += Memory_unit.get_capacity();
+                    first_memory_bandwidth += Memory_unit.get_bandwidth();
+                    first_height = max(first_height, Memory_unit.get_size(1));
+                    first_length += Memory_unit.get_size(0);
+                    break;
+
+                }
+                case COMMUNICATION_UNIT : {
+    
+                    first_communication_bandwidth += Communication_unit.get_bandwidth();
+                    first_height = max(first_height, Communication_unit.get_size(1));
+                    first_length += Communication_unit.get_size(0);  
+                    break;
+
+                }
+                default : break;
+                }
+        }
+    
+        first_length += component_padding * (first.size() - 1);
+
+    }
+
+    first_length = max(first_length, Compute_size);
+
+    if(!second.empty()){
+
+        for(int i = 0; i < second.size(); i++){
+
+            switch(second[i]){
+                case MEMORY_UNIT : {
+                    second_capacity += Memory_unit.get_capacity();
+                    second_memory_bandwidth += Memory_unit.get_bandwidth();
+                    second_height = max(first_height, Memory_unit.get_size(1));
+                    second_length += Memory_unit.get_size(0);
+                    break;
+                }
+                case COMMUNICATION_UNIT : {
+    
+                    second_communication_bandwidth += Communication_unit.get_bandwidth();
+                    second_height = max(first_height, Communication_unit.get_size(1));
+                    second_length += Communication_unit.get_size(0);
+    
+                    break;
+                }
+                default : break;
+                }
+        }
+    
+        second_length += component_padding * (second.size() - 1);
+
+    }
+
+    second_length = max(second_length, Compute_size);
+    
+    bool is_better = (first_height <= second_height) && (first_length <= second_length) && (first_capacity >= second_capacity) && (first_memory_bandwidth >= second_memory_bandwidth) && (first_communication_bandwidth >= second_communication_bandwidth);
+
+    return is_better;
+
+
+}
+
+void Search_permutation(list<string>& permutation_side, float Compute_size, Memory& Memory_unit, Communication& Communication_unit, float relaxation){
+
+    float Memory_size = Memory_unit.get_size(0);
+    float Communication_size = Communication_unit.get_size(0);
+    float component_padding = max(Memory_unit.get_padding(), Communication_unit.get_padding());
     
     stack<string> kdtree;  // search possible solutions in BFS pattern
+    list<string> all_permutations;
     string origin = "";    // initial solution : put nothing on this edge
     kdtree.push(origin);   // save this in kdtree as the starting point
-    permutation_side.push_back(origin); // also, this is a feasible solution, save it to permutation_side
+    all_permutations.push_back(origin); // also, this is a feasible solution, save it to permutation_side
 
         while(!kdtree.empty()){  // when kdtree is empty, there won't be any new solutions, the search can be terminated
             string solution = kdtree.top(); // get a solution, and try to find new solutions based on it
@@ -60,7 +151,7 @@ void Search_permutation(list<string>& permutation_side, float Compute_size, floa
                 // order the string to avoid redundancy. For instance, 1010 and 0101 are the same after using sort function
                 sort(new_solution.begin(), new_solution.end());                
                 kdtree.push(new_solution); // add new solution to kdtree for future search
-                permutation_side.push_back(new_solution); // add this solution as a feasible solution
+                all_permutations.push_back(new_solution); // add this solution as a feasible solution
             }
 
             if (remain_size >= Communication_size + component_padding){ // whether a communication unit can be added
@@ -68,15 +159,77 @@ void Search_permutation(list<string>& permutation_side, float Compute_size, floa
                 new_solution.push_back(COMMUNICATION_UNIT);
                 sort(new_solution.begin(), new_solution.end());
                 kdtree.push(new_solution);
-                permutation_side.push_back(new_solution);
+                all_permutations.push_back(new_solution);
             }
 
         }
 
     
-    permutation_side.unique();  // clear the redundant solutions
+    all_permutations.unique();  // clear the redundant solutions
+    // put the first permutation into List premutation_side
+    permutation_side.push_back(all_permutations.front());
+    // clear this solution in List all_permutations
+    all_permutations.pop_front();
+    // if there is only one solution, it's optimal. return.
+    if (all_permutations.empty()) return;
+    // mark the position of the worse solutions that should be removed later
+    stack<typename list<string>::iterator> indexes;
 
-    // cout << "search completed!" << endl;
+    while(!all_permutations.empty()){
+
+        string new_permutation = all_permutations.front();
+        all_permutations.pop_front();
+        bool is_better = false;
+        bool is_not_worse = true;
+
+        for(typename list<string>::iterator idx = permutation_side.begin(); idx != permutation_side.end(); idx++){
+
+            string current_permutation = *idx;
+            if (is_better_permutation(new_permutation, current_permutation, Memory_unit, Communication_unit, Compute_size)){
+                
+                is_better = true;
+                indexes.push(idx);
+
+            }
+        }
+
+        if(is_better){
+
+            typename list<string>::iterator idx;
+
+            while(!indexes.empty()){
+
+                idx = indexes.top();
+                indexes.pop();
+                permutation_side.erase(idx);
+
+            }
+
+            permutation_side.push_back(new_permutation);
+ 
+        } else{
+
+            for(auto idx = permutation_side.begin(); idx != permutation_side.end(); idx++){
+
+                string current_permutation = *idx;
+                if(is_better_permutation(current_permutation, new_permutation, Memory_unit, Communication_unit, Compute_size)){
+                    is_not_worse = false; break;
+                }
+
+            }
+
+            if(is_not_worse){
+                permutation_side.push_back(new_permutation);
+            }
+        }
+    }
+
+    // cout << "num of permutations : " << permutation_side.size();
+    // for(auto idx = permutation_side.begin(); idx != permutation_side.end(); idx++){
+
+    //     cout << *idx << endl;
+
+    // }
 
     return;
 }
@@ -146,9 +299,9 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
     float wafer_sizes[2] = {wafer_length, wafer_width};
 
     list<string> permutation_length;
-    Search_permutation(permutation_length, Compute_length, Memory_length, Communication_length, component_padding, relaxation);
+    Search_permutation(permutation_length, Compute_length, Memory_unit, Communication_unit, relaxation);
     list<string> permutation_width;
-    Search_permutation(permutation_width, Compute_width, Memory_length, Communication_length, component_padding, relaxation);
+    Search_permutation(permutation_width, Compute_width, Memory_unit, Communication_unit, relaxation);
 
     stack<Wafer> all_solutions;
 
@@ -172,7 +325,7 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
         }
     }
 
-    // cout << all_solutions.size() << endl;
+    cout << all_solutions.size() << endl;
 
     // put the first solution into List result
     result.push_back(all_solutions.top());

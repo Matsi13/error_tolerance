@@ -22,7 +22,9 @@ struct Threshold{
 
 };
 
-void Search_permutation(list<string>& permutation_side, float Compute_size, float Memory_size, float Communication_size, float component_padding, float relaxation);
+bool is_better_permutation(string first, string second, Memory& Memory_unit, Communication& Communication_unit, float Compute_size);
+
+void Search_permutation(list<string>& permutation_side, float Compute_size, Memory& Memory_unit, Communication& Communication_unit, float relaxation);
 
 bool is_over_threshold(Wafer solution, Threshold threshold);
 
