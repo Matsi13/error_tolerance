@@ -6,6 +6,14 @@ die padding :
 0.5
 relaxation :
 0
+min_tflops : 
+300
+min_capacity : 
+200
+min_memory_bandwidth :
+250
+min_communication_bandwidth :
+400
 available compute chip(s) :
 1
 sizes:

@@ -38,6 +38,7 @@ void Scan(){
     float relaxation;
     float wafer_length;
     float wafer_width;
+    Threshold threshold;
     int num;
  
     if (!input.is_open()){
@@ -52,6 +53,15 @@ void Scan(){
     input >> die_padding;
     input >> title;
     input >> relaxation;
+    
+    input >> title;
+    input >> threshold.tflops;
+    input >> title;
+    input >> threshold.capacity;
+    input >> title;
+    input >> threshold.memory_bandwidth;
+    input >> title;
+    input >> threshold.communication_bandwidth;
 
     input >> title;
     input >> num;
@@ -78,6 +88,7 @@ void Scan(){
         input >> title;
         input >> memory_padding;
         Memory Memory_unit(memory_sizes, memory_bandwidth, capacity, memory_padding);
+        memory_configs.push_back(Memory_unit);
     }
 
     input >> title;
@@ -90,9 +101,11 @@ void Scan(){
         input >> title;
         input >> communication_padding;
         Communication Communication_unit(communication_sizes, communication_bandwidth, communication_padding);
+        communication_configs.push_back(Communication_unit);
     }
 
     input.close();
+
     list<list<Wafer>> results_by_configs;
     list<Wafer> result;
 
@@ -100,8 +113,9 @@ void Scan(){
         for (auto memory_idx = memory_configs.begin(); memory_idx != memory_configs.end(); memory_idx++){
             for (auto communication_idx = communication_configs.begin(); communication_idx != communication_configs.end(); communication_idx++){
                 
-                Permutation(*compute_idx, *memory_idx, *communication_idx, die_padding, result, relaxation, wafer_length, wafer_width);
+                Permutation(*compute_idx, *memory_idx, *communication_idx, die_padding, result, relaxation, wafer_length, wafer_width, threshold);
                 results_by_configs.push_back(result);
+
             }
         }
     }

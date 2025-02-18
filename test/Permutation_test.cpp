@@ -39,6 +39,8 @@ int main(){
     float relaxation = 0;
     float wafer_length = 120;
     float wafer_width = 120;
+    Threshold threshold = {300, 200, 250, 400};
+
     list<Wafer> result;
     list<string> permutation_side;
 
@@ -52,7 +54,7 @@ int main(){
 
 
 
-    Permutation(compute_unit, memory_unit, communication_unit, die_padding, result, relaxation, wafer_length, wafer_width);
+    Permutation(compute_unit, memory_unit, communication_unit, die_padding, result, relaxation, wafer_length, wafer_width, threshold);
 
     for (auto idx = result.begin(); idx != result.end(); idx++){
 

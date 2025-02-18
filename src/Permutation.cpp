@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <stack>
 
 #include "Macro.h"
 #include "Memory.h"
@@ -13,18 +14,19 @@
 #include "Compute.h"
 #include "Die.h"
 #include "Wafer.h"
+#include "Permutation.h"
 
 using namespace std;
 
 void Search_permutation(list<string>& permutation_side, float Compute_size, float Memory_size, float Communication_size, float component_padding, float relaxation){
     
-    queue<string> kdtree;  // search possible solutions in BFS pattern
+    stack<string> kdtree;  // search possible solutions in BFS pattern
     string origin = "";    // initial solution : put nothing on this edge
     kdtree.push(origin);   // save this in kdtree as the starting point
     permutation_side.push_back(origin); // also, this is a feasible solution, save it to permutation_side
 
         while(!kdtree.empty()){  // when kdtree is empty, there won't be any new solutions, the search can be terminated
-            string solution = kdtree.front(); // get a solution, and try to find new solutions based on it
+            string solution = kdtree.top(); // get a solution, and try to find new solutions based on it
             kdtree.pop();        // discard the original solution from kdtree, since it is already used up
             float current_size = 0; // the curmulative length of the components on this edge
 
@@ -125,8 +127,15 @@ bool is_better_wafer(Wafer& first, Wafer& second){
 
 }
 
+bool is_over_threshold(Wafer solution, Threshold threshold){
 
-void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width){
+    bool flag = (solution.get_tflops() >= threshold.tflops) && (solution.get_capacity() >= threshold.capacity) && (solution.get_memory_bandwidth() >= threshold.memory_bandwidth) && (solution.get_communication_bandwidth() >= threshold.communication_bandwidth);
+    return flag;
+
+}
+
+
+void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width, Threshold threshold){
 
     // relaxation allows the length of memory + communication to slightly overflow the length of Compute chip
     float Compute_length = Compute_unit.get_size(0);
@@ -141,7 +150,7 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
     list<string> permutation_width;
     Search_permutation(permutation_width, Compute_width, Memory_length, Communication_length, component_padding, relaxation);
 
-    queue<Wafer> all_solutions;
+    stack<Wafer> all_solutions;
 
     // list all solutions based on feasible permutations
 
@@ -152,7 +161,10 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
 
                     Die Die_instance(die_padding, Compute_unit, Memory_unit, Communication_unit, *idx_up, *idx_down, *idx_left, *idx_right);
                     Wafer Wafer_instance(wafer_sizes, Die_instance);
-                    all_solutions.push(Wafer_instance);
+                    if (is_over_threshold(Wafer_instance, threshold)){
+                        all_solutions.push(Wafer_instance);
+                    }
+                    
 
                 }
             } 
@@ -160,47 +172,63 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
         }
     }
 
+    // cout << all_solutions.size() << endl;
+
     // put the first solution into List result
-    result.push_back(all_solutions.front());
+    result.push_back(all_solutions.top());
     // remove this solution from all_solutions
     all_solutions.pop();
     // if there is only one solution, it's optimal
     if(all_solutions.empty()) return;
+    // mark the position of the worse solutions that should be removed later
+    stack<typename list<Wafer>::iterator> indexes;
 
     while (!all_solutions.empty()){
 
-        Wafer new_solution = all_solutions.front(); // get another solution from all_solutions
+        Wafer new_solution = all_solutions.top(); // get another solution from all_solutions
         all_solutions.pop(); // remove it from all_solutions
         bool is_better = false; // if this is true, new_solution should be added to the final result
         bool is_not_worse = true; // if this is true, new_solution should be added to the final result
 
-        for (auto idx = result.begin(); idx != result.end(); idx++){
+        for (typename list<Wafer>::iterator idx = result.begin(); idx != result.end(); idx++){
 
             Wafer current_solution = *idx;
             if (is_better_wafer(new_solution, current_solution)){
                 // if new_solution is better than one of the existing solutions in List result, remove the latter
                 is_better = true; // new_solution will be added to List result later
-                idx = result.erase(idx);
-                idx--;
+                indexes.push(idx); // save the position of the worse solution for later removal
             } 
             
         }
 
-        if(!is_better){ 
-            // even if the new solution is not better than existing solutions, there's still possibility that the new solution is not worse than any existing solutions. Check whether the new solution provides a new comprehensive performance
+        if(is_better){
+
+            typename list<Wafer>::iterator idx;
+
+            while(!indexes.empty()){
+
+                idx = indexes.top();
+                indexes.pop();
+                result.erase(idx);
+
+            }
+
+            result.push_back(new_solution);
+
+        } else{
+
             for (auto idx = result.begin(); idx != result.end(); idx++){
 
-            Wafer current_solution = *idx;
-            if (is_better_wafer(current_solution, new_solution)){
-                is_not_worse = false; break;
-            } 
-            
-        }
+                Wafer current_solution = *idx;
+                if (is_better_wafer(current_solution, new_solution)){
+                    is_not_worse = false; break;
+                } 
+            }
 
-        }
+            if (is_not_worse){
+                result.push_back(new_solution);
+            }
 
-        if(is_better || is_not_worse){
-            result.push_back(new_solution);
         }
 
     }

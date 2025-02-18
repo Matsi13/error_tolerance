@@ -13,14 +13,24 @@
 
 using namespace std;
 
+struct Threshold{
+
+    float tflops;
+    float capacity;
+    float memory_bandwidth;
+    float communication_bandwidth;
+
+};
 
 void Search_permutation(list<string>& permutation_side, float Compute_size, float Memory_size, float Communication_size, float component_padding, float relaxation);
+
+bool is_over_threshold(Wafer solution, Threshold threshold);
 
 bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_width);
 
 bool is_better_wafer(Wafer& first, Wafer& second);
 
-void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width);
+void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width, Threshold threshold);
 
 
 #endif
