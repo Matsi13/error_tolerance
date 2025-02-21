@@ -2,6 +2,7 @@
 #include <queue>
 #include <cmath>
 
+#include "Macro.h"
 #include "Die.h"
 #include "Distance.h"
 

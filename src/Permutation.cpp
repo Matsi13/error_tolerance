@@ -325,7 +325,7 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
         }
     }
 
-    cout << all_solutions.size() << endl;
+    // cout << all_solutions.size() << endl;
 
     // put the first solution into List result
     result.push_back(all_solutions.top());

@@ -49,7 +49,6 @@ Compute.cpp
 Communication.cpp
 Die.cpp
 Wafer.cpp
-Permutation.cpp
 Scan.cpp
 )
 

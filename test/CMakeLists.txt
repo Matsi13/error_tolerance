@@ -18,3 +18,7 @@ add_executable(Permutation_test Permutation_test.cpp)
 target_link_libraries(Permutation_test permutation_lib)
 add_test(NAME Permutation_test COMMAND Permutation_test)
 
+add_executable(Scan_test Scan_test.cpp)
+target_link_libraries(Scan_test scan_lib permutation_lib)
+add_test(NAME Scan_test COMMAND Scan_test)
+

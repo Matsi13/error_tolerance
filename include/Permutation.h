@@ -5,6 +5,7 @@
 #include <queue>
 #include <list>
 
+#include "Macro.h"
 #include "Memory.h"
 #include "Communication.h"
 #include "Compute.h"
@@ -13,14 +14,7 @@
 
 using namespace std;
 
-struct Threshold{
 
-    float tflops;
-    float capacity;
-    float memory_bandwidth;
-    float communication_bandwidth;
-
-};
 
 bool is_better_permutation(string first, string second, Memory& Memory_unit, Communication& Communication_unit, float Compute_size);
 

@@ -3,42 +3,36 @@
 #include <list>
 #include <string>
 
+#include "Macro.h"
 #include "Compute.h"
 #include "Memory.h"
 #include "Communication.h"
 #include "Die.h"
 #include "Wafer.h"
-#include "Permutation.h"
+#include "Scan.h"
 
 using namespace std;
 
 
 // read the configs file and search for solutions
-void Scan(){
-    ifstream input("D:\\VS projects\\error_tolerance\\configuration\\component_configuration.txt", ios::in);
+void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Communication>& communication_configs, string input_path, Config& input_config){
+    
+    ifstream input(input_path, ios::in);
     string title;
 
     float compute_sizes[2];
     float tflops;
     float compute_padding;
-    list<Compute> compute_configs;
 
     float memory_sizes[2];
     float capacity;
     float memory_bandwidth;
     float memory_padding;
-    list<Memory> memory_configs;
 
     float communication_sizes[2];
     float communication_bandwidth;
     float communication_padding;
-    list<Communication> communication_configs;
 
-    float die_padding;
-    float relaxation;
-    float wafer_length;
-    float wafer_width;
-    Threshold threshold;
     int num;
  
     if (!input.is_open()){
@@ -46,22 +40,22 @@ void Scan(){
     }
 
     input >> title;
-    input >> wafer_length;
+    input >> input_config.wafer_length;
     input >> title;
-    input >> wafer_width;
+    input >> input_config.wafer_width;
     input >> title;
-    input >> die_padding;
+    input >> input_config.die_padding;
     input >> title;
-    input >> relaxation;
+    input >> input_config.relaxation;
     
     input >> title;
-    input >> threshold.tflops;
+    input >> input_config.threshold.tflops;
     input >> title;
-    input >> threshold.capacity;
+    input >> input_config.threshold.capacity;
     input >> title;
-    input >> threshold.memory_bandwidth;
+    input >> input_config.threshold.memory_bandwidth;
     input >> title;
-    input >> threshold.communication_bandwidth;
+    input >> input_config.threshold.communication_bandwidth;
 
     input >> title;
     input >> num;
@@ -106,22 +100,9 @@ void Scan(){
 
     input.close();
 
-    list<list<Wafer>> results_by_configs;
-    list<Wafer> result;
+    
 
-    for (auto compute_idx = compute_configs.begin(); compute_idx != compute_configs.end(); compute_idx++){
-        for (auto memory_idx = memory_configs.begin(); memory_idx != memory_configs.end(); memory_idx++){
-            for (auto communication_idx = communication_configs.begin(); communication_idx != communication_configs.end(); communication_idx++){
-                
-                Permutation(*compute_idx, *memory_idx, *communication_idx, die_padding, result, relaxation, wafer_length, wafer_width, threshold);
-                results_by_configs.push_back(result);
-
-            }
-        }
-    }
-
-    // ofstream output("D:\\VS projects\\error_tolerance\\result\\results.txt");
-    // output.close();
+    
 
 
     return;
