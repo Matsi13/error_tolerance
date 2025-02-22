@@ -66,17 +66,12 @@ class Die{
         void set_memory_bandwidth(float memory_bandwidth);
         void set_communication_bandwidth(float communication_bandwidth);
         
-
-
         void update_size(); // update size based on all units
         void update_tflops(); // update tflops based on compute unit
-        void update_capacity(); // update capacity based om memory units
+        void update_capacity(); // update capacity based on memory units
         void update_memory_bandwidth(); // update memory bandwidth based on based on memory units
         void update_communication_bandwidth(); // update communication bandwidth based on communication units
         void update(); // update size, padding, tflops, capacity and bandwidth based on the new permutation
-
-
-    
 
 
 };

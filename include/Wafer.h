@@ -11,13 +11,15 @@ class Wafer{
         Wafer(float* sizes, Die& die);
         Wafer(const Wafer& obj);
         void print(); // print the solution for later visulization
-        const float get_size(int idx)const;
+
+        const float get_size(int idx)const; 
         const float get_tflops()const;
         const float get_capacity()const;
         const float get_memory_bandwidth()const;
         const float get_communication_bandwidth()const;
         const Die get_die()const;
-        void set_die(Die& newdie);
+
+        void set_die(Die& newdie); // change the die in the wafer and update 
     
     private:
         float sizes[2];
@@ -26,9 +28,9 @@ class Wafer{
         float memory_bandwidth;
         float communication_bandwidth;
         Die die;
-        int rows;
-        int columns;
-        void update();
+        int rows; // rows of dies
+        int columns; // columns of dies
+        void update(); // calculate the performance metrics
 
 };
 

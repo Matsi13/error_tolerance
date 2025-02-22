@@ -16,12 +16,11 @@ class Compute{
         void set_size(float size, int index);
         void set_tflops(float tflops);
         void set_padding(float padding);
-
         
     private:
         float sizes[2];  // measured by mm. size[0] is the length, size[1] is the width
         float tflops; // tera float operations per second
-        float padding;   // mm
+        float padding;   // The padding between the compute chip and memory or communication units 
 
 };
 

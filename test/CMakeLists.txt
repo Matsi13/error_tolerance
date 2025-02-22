@@ -22,3 +22,6 @@ add_executable(Scan_test Scan_test.cpp)
 target_link_libraries(Scan_test scan_lib permutation_lib)
 add_test(NAME Scan_test COMMAND Scan_test)
 
+add_executable(Generate_test Generate_test.cpp)
+target_link_libraries(Generate_test generate_lib permutation_lib)
+add_test(NAME Generate_test COMMAND Generate_test)

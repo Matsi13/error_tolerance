@@ -1,0 +1,50 @@
+wafer length :
+120
+wafer width :
+120
+die padding :
+0.5
+relaxation :
+0
+min tflops : 
+300
+min capacity : 
+200
+min memory bandwidth :
+250
+min communication bandwidth :
+400
+available compute chip types :
+1
+tflops per area :
+0.05
+compute chip length :
+14 2 16
+compute chip width :
+12 2 14
+compute chip padding :
+0
+available memory types :
+1
+capacity per area :
+0.16
+bandwidth per length :
+2
+memory length :
+5 1 6
+memory width :
+5 1 6
+memory padding :
+0.1
+available communication types :
+1
+bandwidth per length :
+10
+communication length :
+1 1 2
+communication width :
+2 0 2
+communication padding :
+0.1
+
+

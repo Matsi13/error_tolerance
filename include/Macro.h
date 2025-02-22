@@ -4,6 +4,7 @@
 #define MEMORY_UNIT '0'
 #define COMMUNICATION_UNIT '1'
 
+// the minimal performance metrics that the wafer must satisfy
 struct Threshold{
 
     float tflops;
@@ -13,6 +14,8 @@ struct Threshold{
 
 };
 
+
+// the configurations of the wafer
 struct Config{
 
     float die_padding;
@@ -23,6 +26,8 @@ struct Config{
     
 };
 
+
+// the maximum possible error that the simulator can generate
 struct simulation_error{
     float tflops_positive;
     float tflops_negative;
@@ -34,6 +39,8 @@ struct simulation_error{
     float communication_bandwidth_negative;
 };
 
+
+// the distance between two solutions
 struct solution_distance{
     float tflops;
     float capacity;

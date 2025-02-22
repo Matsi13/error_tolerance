@@ -33,17 +33,22 @@ bool is_better_permutation(string first, string second, Memory& Memory_unit, Com
     float second_memory_bandwidth = 0;
     float second_communication_bandwidth = 0;
 
+    // set the component_padding as the maximum among all components
     float component_padding = max(Memory_unit.get_padding(), Communication_unit.get_padding());
 
+    // calculate the length and height of this permutation
     if (!first.empty()){
 
+        // iterate all components in this permutation
         for(int i = 0; i < first.size(); i++){
 
+            // modify the metric based on the components
             switch(first[i]){
                 case MEMORY_UNIT : {
 
                     first_capacity += Memory_unit.get_capacity();
                     first_memory_bandwidth += Memory_unit.get_bandwidth();
+                    // the height of this permutation is the max height of all its components
                     first_height = max(first_height, Memory_unit.get_size(1));
                     first_length += Memory_unit.get_size(0);
                     break;
@@ -60,11 +65,13 @@ bool is_better_permutation(string first, string second, Memory& Memory_unit, Com
                 default : break;
                 }
         }
-    
+        
+        // add padding length to the total length
         first_length += component_padding * (first.size() - 1);
 
     }
 
+    // the final length is the maximun between components length and compute chip length
     first_length = max(first_length, Compute_size);
 
     if(!second.empty()){
@@ -96,7 +103,8 @@ bool is_better_permutation(string first, string second, Memory& Memory_unit, Com
     }
 
     second_length = max(second_length, Compute_size);
-    
+
+    // a better permutation provides better performance with less height and less length
     bool is_better = (first_height <= second_height) && (first_length <= second_length) && (first_capacity >= second_capacity) && (first_memory_bandwidth >= second_memory_bandwidth) && (first_communication_bandwidth >= second_communication_bandwidth);
 
     return is_better;
@@ -175,24 +183,31 @@ void Search_permutation(list<string>& permutation_side, float Compute_size, Memo
     // mark the position of the worse solutions that should be removed later
     stack<typename list<string>::iterator> indexes;
 
+    // iterate all_permutations. Each time a new solution comes, check all solutions in permutation_side to remove sub-optimal ones. If the new solution isn't sub-optimal, add it to permutation_side
     while(!all_permutations.empty()){
 
+        // fetch a new solution
         string new_permutation = all_permutations.front();
         all_permutations.pop_front();
+        // whether the new solution is better than an existing solution
         bool is_better = false;
+        // whether the new solution is not worse than any of the existing solutions
         bool is_not_worse = true;
 
+        // iterate existing solutions in permutation_side to delete sub-optimal ones compared to the new solution
         for(typename list<string>::iterator idx = permutation_side.begin(); idx != permutation_side.end(); idx++){
 
             string current_permutation = *idx;
+            // if the new solution is better than an existing solution, the existing solution should be removed. Save its index and remove it later.
             if (is_better_permutation(new_permutation, current_permutation, Memory_unit, Communication_unit, Compute_size)){
-                
+                // the new solution is better than an existing solution, the new solution should be added to permutation_side
                 is_better = true;
                 indexes.push(idx);
 
             }
         }
 
+        // if is_better == true, the new solution should be added to permutation_side, and some existing solutions should be removed
         if(is_better){
 
             typename list<string>::iterator idx;
@@ -207,11 +222,13 @@ void Search_permutation(list<string>& permutation_side, float Compute_size, Memo
 
             permutation_side.push_back(new_permutation);
  
-        } else{
+        } else{ //Even if the new solution is not better than any existing solution, it's possible that the new solution is nor worse and should be added to permutation_side
 
+            // iterate permutation_side
             for(auto idx = permutation_side.begin(); idx != permutation_side.end(); idx++){
 
                 string current_permutation = *idx;
+                // 
                 if(is_better_permutation(current_permutation, new_permutation, Memory_unit, Communication_unit, Compute_size)){
                     is_not_worse = false; break;
                 }
@@ -280,6 +297,7 @@ bool is_better_wafer(Wafer& first, Wafer& second){
 
 }
 
+
 bool is_over_threshold(Wafer solution, Threshold threshold){
 
     bool flag = (solution.get_tflops() >= threshold.tflops) && (solution.get_capacity() >= threshold.capacity) && (solution.get_memory_bandwidth() >= threshold.memory_bandwidth) && (solution.get_communication_bandwidth() >= threshold.communication_bandwidth);
@@ -298,15 +316,17 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
     float component_padding = max(Memory_unit.get_padding(), Communication_unit.get_padding());
     float wafer_sizes[2] = {wafer_length, wafer_width};
 
+    // search possible permutation on compute chip's length
     list<string> permutation_length;
     Search_permutation(permutation_length, Compute_length, Memory_unit, Communication_unit, relaxation);
+    // search possible permutation on compute chip's width
     list<string> permutation_width;
     Search_permutation(permutation_width, Compute_width, Memory_unit, Communication_unit, relaxation);
 
+    // save all solutions, not necessarily optimal
     stack<Wafer> all_solutions;
 
     // list all solutions based on feasible permutations
-
     for(auto idx_up = permutation_length.begin(); idx_up != permutation_length.end(); idx_up++){
         for (auto idx_down = permutation_length.begin(); idx_down != permutation_length.end(); idx_down++){
             for (auto idx_left = permutation_width.begin(); idx_left != permutation_width.end(); idx_left++){
@@ -314,6 +334,7 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
 
                     Die Die_instance(die_padding, Compute_unit, Memory_unit, Communication_unit, *idx_up, *idx_down, *idx_left, *idx_right);
                     Wafer Wafer_instance(wafer_sizes, Die_instance);
+                    // check whether the solution meets the minimal performance metrics
                     if (is_over_threshold(Wafer_instance, threshold)){
                         all_solutions.push(Wafer_instance);
                     }
@@ -354,7 +375,7 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
             
         }
 
-        if(is_better){
+        if(is_better){ // if is_better == true, the new solution should be added to permutation_side, and some existing solutions should be removed
 
             typename list<Wafer>::iterator idx;
 
@@ -368,8 +389,9 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
 
             result.push_back(new_solution);
 
-        } else{
+        } else{ //Even if the new solution is not better than any existing solution, it's possible that the new solution is nor worse and should be added to permutation_side
 
+            // iterate permutation_side
             for (auto idx = result.begin(); idx != result.end(); idx++){
 
                 Wafer current_solution = *idx;

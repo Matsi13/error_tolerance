@@ -52,3 +52,10 @@ Wafer.cpp
 Scan.cpp
 )
 
+add_library(generate_lib 
+Memory.cpp
+Compute.cpp
+Communication.cpp
+Generate.cpp
+)
+
