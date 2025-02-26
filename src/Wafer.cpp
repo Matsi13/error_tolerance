@@ -26,7 +26,7 @@ Wafer::Wafer(const Wafer& obj){
 
 void Wafer::print(){
 
-    cout << tflops<< " " << capacity << " " << memory_bandwidth << " " << communication_bandwidth << endl;
+    cout << TFLOPS<< " " << capacity << " " << memory_bandwidth << " " << communication_bandwidth << endl;
 
 }
 
@@ -38,9 +38,9 @@ const float Wafer::get_size(int idx)const{
 }
 
 
-const float Wafer::get_tflops()const{
+const float Wafer::get_TFLOPS()const{
 
-    return tflops;
+    return TFLOPS;
 
 }
 
@@ -85,7 +85,7 @@ void Wafer::update(){
     int rows = floor(sizes[0] / die_sizes[0]);
     int columns = floor(sizes[1] / die_sizes[1]);
     int die_num = rows * columns;
-    this->tflops = die.get_tflops() * die_num;
+    this->TFLOPS = die.get_TFLOPS() * die_num;
     this->capacity = die.get_capacity() * die_num;
     this->memory_bandwidth = die.get_memory_bandwidth() * die_num;
     this->communication_bandwidth = die.get_communication_bandwidth() * die_num;

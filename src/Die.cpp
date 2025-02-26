@@ -66,9 +66,9 @@ const float Die::get_padding()const{
 }
 
 
-const float Die::get_tflops()const{
+const float Die::get_TFLOPS()const{
     
-    return tflops;
+    return TFLOPS;
 
 }
 
@@ -150,9 +150,9 @@ void Die::set_size(float size, int index){
 }
 
 
-void Die::set_tflops(float tflops){
+void Die::set_TFLOPS(float TFLOPS){
 
-    this->tflops = tflops;
+    this->TFLOPS = TFLOPS;
     return;
     
 }
@@ -332,9 +332,9 @@ void Die::update_size(){
 }
 
 
-void Die::update_tflops(){
+void Die::update_TFLOPS(){
 
-    set_tflops(Compute_unit.get_tflops());
+    set_TFLOPS(Compute_unit.get_TFLOPS());
     return;
 
 }
@@ -517,7 +517,7 @@ void Die::update_communication_bandwidth(){
 void Die::update(){
 
     update_size(); 
-    update_tflops(); 
+    update_TFLOPS(); 
     update_capacity(); 
     update_memory_bandwidth(); 
     update_communication_bandwidth(); 
@@ -539,7 +539,7 @@ void Die::set_Compute_unit(Compute& new_Compute_unit){
 
     this->Compute_unit = new_Compute_unit;
     update_size();
-    update_tflops();
+    update_TFLOPS();
     return;
     
 }

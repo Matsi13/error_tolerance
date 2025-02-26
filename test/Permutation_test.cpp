@@ -20,9 +20,9 @@ using namespace std;
 int main(){
 
     float compute_sizes[2] = {16, 12};
-    float tflops = 10;
+    float TFLOPS = 10;
     float compute_padding = 0;
-    Compute compute_unit(compute_sizes, tflops, compute_padding);
+    Compute compute_unit(compute_sizes, TFLOPS, compute_padding);
 
     float memory_sizes[2] = {5, 5};
     float capacity = 4;

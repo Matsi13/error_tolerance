@@ -10,6 +10,20 @@
 
 根据1.1中建立的解空间，分析给定的仿真器误差下，可能取代当前最优解的其他排布方案
 
+### 1.3 性能分析
+
+对于一些特定结构的计算任务（例如不同参数的transformer类，加上一些已知的input长度和预期output长度），使用公式分析其计算访存通信需求，进而选择最接近于这些指标需求的空间架构
+
+计算访存通信需求会受到并行方式和重计算等优化手段的影响，所以每个应用的需求是一系列散点。这些都是总的计算访存通信需求，是不考虑数据依赖的情况，即所有的操作可以完全交织。
+
+思考：
+
+怎样考虑具体的依赖关系？如果有规律，或许这些依赖关系也可以被简单建模
+
+或者可以给出这种解析公式的误差上限，将误差范围内的架构也包括进来
+
+
+
 ## 2、排布方式建模
 
 ### 2.1. 类
@@ -100,9 +114,76 @@ Generate(list\<Compute\>& compute_configs, list\<Memory\>& memory_configs, list\
 
 通信单元：首先列出可用的通信单元系列数量，每个系列包括以下参数：单位长度可提供的通信带宽，长度的迭代区间，宽度的迭代区间，padding
 
+## 3、负载分析
+
+### 3.1 decode
+
+假设即将运行的任务是LLM，目前的序列长度$seq=200$，每个词向量的维度$d_{model}=512$，attention head数$h=8$， 矩阵$W^Q:d_{model}\times d_k, W^K:d_{model}\times d_k, W^V:d_{model}\times d_v$ ，其中$d_k=d_v=64$， $Q=XW^Q,K=XW^K,V=XW^V$， Attention层输出为$Z:1\times d_{v}$，$Z=softmax(\frac{QK^T}{\sqrt{d_k}})V$ 。FFN有两层，权重矩阵为$W_1:d_{model}\times hidden, W_2:hidden\times d_{model}$，其中$hidden=2048$。两个FFN层之后都有激活函数。可以认为除了KV_cache之外，其他权重一直保存在计算芯片的SRAM上，无需搬运。
+
+对于新的token，生成$QKV$的计算量为$3\times2\times d_{model}\times d_k \times h=1.5M$，生成$Z$的计算量为$5\times d_v\times h=2.5K$，FFN层的计算量为$2\times d_{model}\times hidden + hidden\times2 + 2\times hidden\times d_{model} + d_{model}\times 2=4M$，总计算量约为$5.5M$
+
+考虑到已有KV_cache的decode情况，此时的矩阵$K:(d_k\times h)\times seq$，矩阵$V:seq\times(d_k\times h)$，生成$Z$的计算量为$5 \times d_{model} \times seq \times d_{model} + 2 \times d_{model} \times d_{model} = 250M$，需要读取的KV_cache约为$seq\times d_{model} \times 2\times 2=400KB$，计算访存比$R_d=\frac{250\times1024}{400}\times \frac{1}{2250}=0.28$
+
+通用公式：
+
+一个transformer block一次前向推理的计算量为$C_{f} (seq)= 6 d_{model} d_k h + 5 d_v h + 2 d_{model} hidden + 2 hidden + 2 hidden d_{model} + 2 d_{model} + 5 d_{model} seq d_{model} + 2 d_{model}^2 $，访存量为$M_{f}(seq)=4seq d_{model} $，通信量为$N_{f}=seq*d_{model}$
+
+假设每个die上包含$l$个串联的 transformer block，生成了一个长度为$S$的输出，那么总计算量为$l*S*C_{f}(S/2)$，总访存量为$l*S*M_f(S/2)$，总通信量为$S/2*N_f$
+
+考虑反向传播过程。假设每$R$个transformer block设置一个检查点，每个检查点保留整个transformer block的中间值（不含输出）。一个transformer block的中间值总量为$M_{ime}=S*(d_{model}+2d_k*h+d_v*h+d_{model}+hidden+d_{model})$。LLM总共包含$L$个transformer block，当前die负责计算的是第$i\to i+l-1$层。检查点设置在第$i, i+R, i+2R, ......$层。则反向传播的计算量为$3*l*C_{f}(S)*\frac{R-1}{R}$，访存量为$M_{ime}*l/R$ 。
+
+使用1F1B策略，则流水线平稳运行时，计算压力为前向+反向，存储压力为$M_{ime}*(L-i+l/2-R/2)*(l/R)$，通信压力为前向+后向，访存压力为前向+后向。
 
 
-## 3、随想：
+
+### 3.2 prefill
+
+考虑prefill情况，prompt长度为20，则计算量为$20*5.5M=110M$，计算访存比 $R_d=\frac{110}{5.5}\times \frac{1}{2250}=0.28$
+
+### 3.3 training
+
+![image-20240906102326999](C:\Users\Matsi\AppData\Roaming\Typora\typora-user-images\image-20240906102326999.png)
+
+以LLaMA为例，主要计算量在于其32层transformer block，每个transformer block有32个head。
+
+每个transformer block的权重总量约6MB，为了训练而保留的权重梯度为12MB，前向推理计算总量为$7.89e^{-2}$TFLOPS，反向传播计算总量相同。
+
+决定访存总量的是重计算方式，1MB的存储对应$7.89e^{-2}$TFLOPS计算量。
+
+### 3.4 权重同步
+
+考虑权重同步过程中的通信模式。
+
+假设16个die，每4个die保存一个完整网络，排布方式是2X2，则通信模式为：
+
+![wafer scale_00](D:\_实验室\2025春\PAPER\wafer scale_00.jpg)
+
+## 4、性能评估模型
+
+### 4.1 类
+
+#### 4.1.1 workload
+
+计算量，存储量，通信量
+
+是所有神经网络的父类
+
+#### 4.1.2 神经网络（以LLM为例）
+
+继承workload，可以有自己的各种结构参数和优化方法，使用workload的接口返回基本的性能指标
+
+### 4.2 函数
+
+输入架构参数和workload，返回性能。如果capacity不足，惩罚项为访问片下存储的时间。
+
+
+
+
+
+## 5、随想：
+
 如果可以在一个计算单元周围集成多种存储单元，多种通信单元，应该如何修改代码呢？
 
 如果有一项性能指标无法满足，那么怎样建模惩罚项以模拟实际情况呢？
+
+计算核内部加上SRAM？

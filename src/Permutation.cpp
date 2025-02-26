@@ -258,7 +258,7 @@ bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_widt
     float first_length = first.get_size(0);
     float first_width = first.get_size(1);
     int first_count = max(floor(wafer_length / first_length) * floor(wafer_width / first_width), floor(wafer_width / first_length) * floor(wafer_length / first_width));
-    float first_tflops = first.get_tflops() * first_count;
+    float first_TFLOPS = first.get_TFLOPS() * first_count;
     float first_capacity = first.get_capacity() * first_count;
     float first_memory_bandwidth = first.get_memory_bandwidth() * first_count;
     float first_communication_bandwidth = first.get_communication_bandwidth() * first_count;
@@ -266,12 +266,12 @@ bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_widt
     float second_length = second.get_size(0);
     float second_width = second.get_size(1);
     int second_count = max(floor(wafer_length / second_length) * floor(wafer_width / second_width), floor(wafer_width / second_length) * floor(wafer_length / second_width));
-    float second_tflops = second.get_tflops() * second_count;
+    float second_TFLOPS = second.get_TFLOPS() * second_count;
     float second_capacity = second.get_capacity() * second_count;
     float second_memory_bandwidth = second.get_memory_bandwidth() * second_count;
     float second_communication_bandwidth = second.get_communication_bandwidth() * second_count;
 
-    bool is_better = (first_tflops >= second_tflops) && (first_capacity >= second_capacity) && (first_memory_bandwidth >= second_memory_bandwidth) && (first_communication_bandwidth >= second_communication_bandwidth);
+    bool is_better = (first_TFLOPS >= second_TFLOPS) && (first_capacity >= second_capacity) && (first_memory_bandwidth >= second_memory_bandwidth) && (first_communication_bandwidth >= second_communication_bandwidth);
 
     return is_better;
 
@@ -281,17 +281,17 @@ bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_widt
 bool is_better_wafer(Wafer& first, Wafer& second){
 
     
-    float first_tflops = first.get_tflops();
+    float first_TFLOPS = first.get_TFLOPS();
     float first_capacity = first.get_capacity();
     float first_memory_bandwidth = first.get_memory_bandwidth();
     float first_communication_bandwidth = first.get_communication_bandwidth();
 
-    float second_tflops = second.get_tflops();
+    float second_TFLOPS = second.get_TFLOPS();
     float second_capacity = second.get_capacity();
     float second_memory_bandwidth = second.get_memory_bandwidth();
     float second_communication_bandwidth = second.get_communication_bandwidth();
 
-    bool is_better = (first_tflops >= second_tflops) && (first_capacity >= second_capacity) && (first_memory_bandwidth >= second_memory_bandwidth) && (first_communication_bandwidth >= second_communication_bandwidth);
+    bool is_better = (first_TFLOPS >= second_TFLOPS) && (first_capacity >= second_capacity) && (first_memory_bandwidth >= second_memory_bandwidth) && (first_communication_bandwidth >= second_communication_bandwidth);
 
     return is_better;
 
@@ -300,7 +300,7 @@ bool is_better_wafer(Wafer& first, Wafer& second){
 
 bool is_over_threshold(Wafer solution, Threshold threshold){
 
-    bool flag = (solution.get_tflops() >= threshold.tflops) && (solution.get_capacity() >= threshold.capacity) && (solution.get_memory_bandwidth() >= threshold.memory_bandwidth) && (solution.get_communication_bandwidth() >= threshold.communication_bandwidth);
+    bool flag = (solution.get_TFLOPS() >= threshold.TFLOPS) && (solution.get_capacity() >= threshold.capacity) && (solution.get_memory_bandwidth() >= threshold.memory_bandwidth) && (solution.get_communication_bandwidth() >= threshold.communication_bandwidth);
     return flag;
 
 }

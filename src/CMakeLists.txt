@@ -59,3 +59,7 @@ Communication.cpp
 Generate.cpp
 )
 
+add_library(workload_lib
+Workload.cpp
+)
+

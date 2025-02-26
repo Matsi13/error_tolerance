@@ -7,7 +7,7 @@
 // the minimal performance metrics that the wafer must satisfy
 struct Threshold{
 
-    float tflops;
+    float TFLOPS;
     float capacity;
     float memory_bandwidth;
     float communication_bandwidth;
@@ -29,8 +29,8 @@ struct Config{
 
 // the maximum possible error that the simulator can generate
 struct simulation_error{
-    float tflops_positive;
-    float tflops_negative;
+    float TFLOPS_positive;
+    float TFLOPS_negative;
     float capacity_positive;
     float capacity_negative;
     float memory_bandwidth_positive;
@@ -42,7 +42,7 @@ struct simulation_error{
 
 // the distance between two solutions
 struct solution_distance{
-    float tflops;
+    float TFLOPS;
     float capacity;
     float memory_bandwidth;
     float communication_bandwidth;

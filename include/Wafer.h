@@ -13,7 +13,7 @@ class Wafer{
         void print(); // print the solution for later visulization
 
         const float get_size(int idx)const; 
-        const float get_tflops()const;
+        const float get_TFLOPS()const;
         const float get_capacity()const;
         const float get_memory_bandwidth()const;
         const float get_communication_bandwidth()const;
@@ -23,7 +23,7 @@ class Wafer{
     
     private:
         float sizes[2];
-        float tflops;
+        float TFLOPS;
         float capacity;
         float memory_bandwidth;
         float communication_bandwidth;

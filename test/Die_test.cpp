@@ -14,9 +14,9 @@ using namespace std;
 int main(){
 
     float Compute_sizes[2] = {12,16};
-    float tflops = 10;
+    float TFLOPS = 10;
     float Compute_padding = 0.5;
-    Compute Compute_unit(Compute_sizes, tflops, Compute_padding);
+    Compute Compute_unit(Compute_sizes, TFLOPS, Compute_padding);
 
     float Memory_sizes[2] = {5, 5};
     float Memory_bandwidth = 4;
@@ -41,7 +41,7 @@ int main(){
     assert(Die_instance.get_size(0) == 26);
     assert(Die_instance.get_size(1) == 30);
     assert(Die_instance.get_padding() == 2);
-    assert(Die_instance.get_tflops() == 10);
+    assert(Die_instance.get_TFLOPS() == 10);
     assert(Die_instance.get_capacity() == 192);
     assert(Die_instance.get_memory_bandwidth() == 32);
     assert(Die_instance.get_communication_bandwidth() == 4);

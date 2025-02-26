@@ -21,7 +21,7 @@ void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Com
     string title;
 
     float compute_sizes[2];
-    float tflops;
+    float TFLOPS;
     float compute_padding;
 
     float memory_sizes[2];
@@ -49,7 +49,7 @@ void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Com
     input >> input_config.relaxation;
     
     input >> title;
-    input >> input_config.threshold.tflops;
+    input >> input_config.threshold.TFLOPS;
     input >> title;
     input >> input_config.threshold.capacity;
     input >> title;
@@ -63,10 +63,10 @@ void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Com
         input >> title;
         input >> compute_sizes[0] >> compute_sizes[1];
         input >> title;
-        input >> tflops;
+        input >> TFLOPS;
         input >> title;
         input >> compute_padding;
-        Compute Compute_unit(compute_sizes, tflops, compute_padding);
+        Compute Compute_unit(compute_sizes, TFLOPS, compute_padding);
         compute_configs.push_back(Compute_unit);
     }
 

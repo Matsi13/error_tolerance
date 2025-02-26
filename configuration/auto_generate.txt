@@ -6,7 +6,7 @@ die padding :
 0.5
 relaxation :
 0
-min tflops : 
+min TFLOPS : 
 300
 min capacity : 
 200
@@ -16,7 +16,7 @@ min communication bandwidth :
 400
 available compute chip types :
 1
-tflops per area :
+TFLOPS per area :
 0.05
 compute chip length :
 14 2 16

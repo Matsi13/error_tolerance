@@ -33,7 +33,7 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
 
     // read performace threshold
     input >> title;
-    input >> input_config.threshold.tflops;
+    input >> input_config.threshold.TFLOPS;
     input >> title;
     input >> input_config.threshold.capacity;
     input >> title;
@@ -45,7 +45,7 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
     input >> title;
     input >> num;
 
-    float tflops_per_area;
+    float TFLOPS_per_area;
     float compute_length_min;
     float compute_length_max;
     float compute_length_stride;
@@ -57,7 +57,7 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
     for (int i = 0; i < num; i++){
 
         input >> title;
-        input >> tflops_per_area;
+        input >> TFLOPS_per_area;
         input >> title;
         input >> compute_length_min >> compute_length_stride >> compute_length_max;
         input >> title;
@@ -75,9 +75,9 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
             for(int k = 0; k < width_num; k++){
 
                 float compute_width = compute_width_min + k * compute_width_stride;
-                float tflops = compute_length * compute_width * tflops_per_area;
+                float TFLOPS = compute_length * compute_width * TFLOPS_per_area;
                 float compute_sizes[2] = {compute_length, compute_width};
-                Compute compute_instance(compute_sizes, tflops, compute_padding);
+                Compute compute_instance(compute_sizes, TFLOPS, compute_padding);
                 compute_configs.push_back(compute_instance);
 
             }
