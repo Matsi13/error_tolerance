@@ -10,6 +10,7 @@ class Wafer{
         Wafer(){};
         Wafer(float* sizes, Die& die);
         Wafer(const Wafer& obj);
+        Wafer& operator = (const Wafer &obj);
         void print(); // print the solution for later visulization
 
         const float get_size(int idx)const; 

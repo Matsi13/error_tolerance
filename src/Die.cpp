@@ -28,17 +28,39 @@ Die::Die(float padding, Compute& Compute_unit, Memory& Memory_unit, Communicatio
 
 Die::Die(const Die& obj){
 
-    this->padding = obj.padding;
-    this->Compute_unit = obj.Compute_unit;
-    this->Memory_unit = obj.Memory_unit;
-    this->Communication_unit = obj.Communication_unit;
-    this->up = obj.up;
-    this->down = obj.down;
-    this->left = obj.left;
-    this->right = obj.right;
+    this->padding = obj.get_padding();
+    this->Compute_unit = obj.get_Compute_unit();
+    this->Memory_unit = obj.get_Memory_unit();
+    this->Communication_unit = obj.get_Communication_unit();
+    this->up = obj.get_permutation_up();
+    this->down = obj.get_permutation_down();
+    this->left = obj.get_permutation_left();
+    this->right = obj.get_permutation_right();
 
     update();
     
+}
+
+
+Die& Die::operator = (const Die &obj){
+
+    if (this != &obj){
+
+        this->padding = obj.get_padding();
+        this->Compute_unit = obj.get_Compute_unit();
+        this->Memory_unit = obj.get_Memory_unit();
+        this->Communication_unit = obj.get_Communication_unit();
+        this->up = obj.get_permutation_up();
+        this->down = obj.get_permutation_down();
+        this->left = obj.get_permutation_left();
+        this->right = obj.get_permutation_right();
+
+        update();
+
+    }
+
+    return *this;
+
 }
 
 

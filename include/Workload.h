@@ -9,10 +9,10 @@ class Workload{
         Workload(const Workload &obj);
         Workload& operator = (const Workload &obj);
 
-        const float get_TFLOPs() const;
-        const float get_paramsize() const;
-        const float get_access() const;
-        const float get_traffic() const;
+        virtual const float get_TFLOPs() const;
+        virtual const float get_paramsize() const;
+        virtual const float get_access() const;
+        virtual const float get_traffic() const;
 
         void set_TFLOPs(float TFLOPs);
         void set_paramsize(float paramsize);

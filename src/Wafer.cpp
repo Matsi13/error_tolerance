@@ -24,6 +24,22 @@ Wafer::Wafer(const Wafer& obj){
 }
 
 
+Wafer& Wafer::operator = (const Wafer &obj){
+
+    if (this != &obj){
+
+        this->sizes[0] = obj.get_size(0);
+        this->sizes[1] = obj.get_size(1);
+        this->die = obj.get_die();
+        update();
+
+    }
+
+    return *this;
+
+}
+
+
 void Wafer::print(){
 
     cout << TFLOPS<< " " << capacity << " " << memory_bandwidth << " " << communication_bandwidth << endl;

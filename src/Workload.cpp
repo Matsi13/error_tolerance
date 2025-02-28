@@ -27,10 +27,15 @@ Workload::Workload(const Workload &obj){
 
 Workload& Workload::operator = (const Workload &obj){
 
-    this->TFLOPs = obj.get_TFLOPs();
-    this->paramsize = obj.get_paramsize();
-    this->access = obj.get_access();
-    this->traffic = obj.get_traffic();
+    if (this != &obj){
+
+        this->TFLOPs = obj.get_TFLOPs();
+        this->paramsize = obj.get_paramsize();
+        this->access = obj.get_access();
+        this->traffic = obj.get_traffic();
+
+    }
+
     return *this;
     
 }

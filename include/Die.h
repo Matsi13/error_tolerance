@@ -16,6 +16,7 @@ class Die{
         Die(){};
         Die(float padding, Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, string& up, string& down, string& left, string& right);
         Die(const Die& obj);
+        Die& operator = (const Die &obj);
         ~Die();
 
         const float get_size(int index)const;

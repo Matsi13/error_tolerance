@@ -122,11 +122,17 @@ Generate(list\<Compute\>& compute_configs, list\<Memory\>& memory_configs, list\
 
 对于新的token，生成$QKV$的计算量为$3\times2\times d_{model}\times d_k \times h=1.5M$，生成$Z$的计算量为$5\times d_v\times h=2.5K$，FFN层的计算量为$2\times d_{model}\times hidden + hidden\times2 + 2\times hidden\times d_{model} + d_{model}\times 2=4M$，总计算量约为$5.5M$
 
-考虑到已有KV_cache的decode情况，此时的矩阵$K:(d_k\times h)\times seq$，矩阵$V:seq\times(d_k\times h)$，生成$Z$的计算量为$5 \times d_{model} \times seq \times d_{model} + 2 \times d_{model} \times d_{model} = 250M$，需要读取的KV_cache约为$seq\times d_{model} \times 2\times 2=400KB$，计算访存比$R_d=\frac{250\times1024}{400}\times \frac{1}{2250}=0.28$
+考虑到已有KV_cache的decode情况，此时的矩阵$K:(d_k\times h)\times seq$，矩阵$V:seq\times(d_k\times h)$，生成$Z$的计算量为$5 \times d_{model} \times seq \times d_{model} + 2 \times d_{model} \times d_{model} = 250M$，需要读取的KV_cache约为$seq\times d_{model} \times 2\times 2=400KB$，
+
+计算访存比$R_d=\frac{250\times1024}{400}\times \frac{1}{2250}=0.28$
 
 通用公式：
 
-一个transformer block一次前向推理的计算量为$C_{f} (seq)= 6 d_{model} d_k h + 5 d_v h + 2 d_{model} hidden + 2 hidden + 2 hidden d_{model} + 2 d_{model} + 5 d_{model} seq d_{model} + 2 d_{model}^2 $，访存量为$M_{f}(seq)=4seq d_{model} $，通信量为$N_{f}=seq*d_{model}$
+一个transformer block一次前向推理的计算量为$C_{f} (seq)= 6 d_{model} d_k h + 5 d_v h + 2 d_{model} hidden + 2 hidden + 2 hidden d_{model} + 2 d_{model} + 5 d_{model} seq d_{model} + 2 d_{model}^2 $，
+
+访存量为$M_{f}(seq)=4seq d_{model} $，
+
+通信量为$N_{f}=seq*d_{model}$
 
 假设每个die上包含$l$个串联的 transformer block，生成了一个长度为$S$的输出，那么总计算量为$l*S*C_{f}(S/2)$，总访存量为$l*S*M_f(S/2)$，总通信量为$S/2*N_f$
 
