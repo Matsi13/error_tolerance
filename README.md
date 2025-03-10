@@ -164,32 +164,3 @@ Generate(list\<Compute\>& compute_configs, list\<Memory\>& memory_configs, list\
 
 ![wafer scale_00](D:\_实验室\2025春\PAPER\wafer scale_00.jpg)
 
-## 4、性能评估模型
-
-### 4.1 类
-
-#### 4.1.1 workload
-
-计算量，存储量，通信量
-
-是所有神经网络的父类
-
-#### 4.1.2 神经网络（以LLM为例）
-
-继承workload，可以有自己的各种结构参数和优化方法，使用workload的接口返回基本的性能指标
-
-### 4.2 函数
-
-输入架构参数和workload，返回性能。如果capacity不足，惩罚项为访问片下存储的时间。
-
-
-
-
-
-## 5、随想：
-
-如果可以在一个计算单元周围集成多种存储单元，多种通信单元，应该如何修改代码呢？
-
-如果有一项性能指标无法满足，那么怎样建模惩罚项以模拟实际情况呢？
-
-计算核内部加上SRAM？

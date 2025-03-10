@@ -4,6 +4,12 @@
 #define MEMORY_UNIT '0'
 #define COMMUNICATION_UNIT '1'
 
+#define LAYERNORM 0
+#define RMSNORM 1
+
+#define INFERENCE 0
+#define TRAINING 1
+
 // the minimal performance metrics that the wafer must satisfy
 struct Threshold{
 
