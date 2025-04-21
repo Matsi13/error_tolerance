@@ -4,6 +4,10 @@ wafer width :
 120
 die padding :
 0.5
+bandwidth per area:
+1
+memory bandwidth ratio:
+0.6
 relaxation :
 0
 min_TFLOPS : 

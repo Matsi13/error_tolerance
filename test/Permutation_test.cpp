@@ -37,6 +37,8 @@ int main(){
     Communication communication_unit(communication_sizes, communication_bandwidth, communication_padding);
 
     float die_padding = 0.5;
+    float bandwidth_per_area = 1;
+    float memory_bandwidth_ratio = 0.6;
     float relaxation = 0;
     float wafer_length = 120;
     float wafer_width = 120;
@@ -55,7 +57,7 @@ int main(){
 
 
 
-    Permutation(compute_unit, memory_unit, communication_unit, die_padding, result, relaxation, wafer_length, wafer_width, threshold);
+    Permutation(compute_unit, memory_unit, communication_unit, die_padding, bandwidth_per_area, memory_bandwidth_ratio, result, relaxation, wafer_length, wafer_width, threshold);
 
     for (auto idx = result.begin(); idx != result.end(); idx++){
 

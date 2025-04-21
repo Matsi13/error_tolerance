@@ -29,6 +29,10 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
     input >> title;
     input >> input_config.die_padding;
     input >> title;
+    input >> input_config.bandwidth_per_area;
+    input >> title;
+    input >> input_config.memory_bandwidth_ratio;
+    input >> title;
     input >> input_config.relaxation;
 
     // read performace threshold
@@ -83,7 +87,7 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
                 float TFLOPS = compute_length * compute_width * TFLOPS_per_area;
                 float SRAM_capacity = compute_length * compute_width * SRAM_capacity_per_area;
                 float compute_sizes[2] = {compute_length, compute_width};
-                Compute compute_instance(compute_sizes, TFLOPS, compute_padding, SRAM_capacity);
+                Compute compute_instance(compute_sizes, TFLOPS, SRAM_capacity, compute_padding);
                 compute_configs.push_back(compute_instance);
 
             }

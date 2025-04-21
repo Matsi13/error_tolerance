@@ -30,7 +30,7 @@ int main(){
         for (auto memory_idx = memory_configs.begin(); memory_idx != memory_configs.end(); memory_idx++){
             for (auto communication_idx = communication_configs.begin(); communication_idx != communication_configs.end(); communication_idx++){
                 
-                Permutation(*compute_idx, *memory_idx, *communication_idx, input_config.die_padding, result, input_config.relaxation, input_config.wafer_length, input_config.wafer_width, input_config.threshold);
+                Permutation(*compute_idx, *memory_idx, *communication_idx, input_config.die_padding, input_config.bandwidth_per_area, input_config.memory_bandwidth_ratio, result, input_config.relaxation, input_config.wafer_length, input_config.wafer_width, input_config.threshold);
                 results_by_configs.push_back(result);
 
             }

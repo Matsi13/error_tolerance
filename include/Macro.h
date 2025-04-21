@@ -26,6 +26,8 @@ struct Threshold{
 struct Config{
 
     float die_padding;
+    float bandwidth_per_area;
+    float memory_bandwidth_ratio;
     float relaxation;
     float wafer_length;
     float wafer_width;

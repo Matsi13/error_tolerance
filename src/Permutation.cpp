@@ -310,7 +310,7 @@ bool is_over_threshold(Wafer solution, Threshold threshold){
 }
 
 
-void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width, Threshold threshold){
+void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, float bandwidth_per_area, float memory_bandwidth_ratio, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width, Threshold threshold){
 
     // relaxation allows the length of memory + communication to slightly overflow the length of Compute chip
     float Compute_length = Compute_unit.get_size(0);
@@ -336,7 +336,7 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
             for (auto idx_left = permutation_width.begin(); idx_left != permutation_width.end(); idx_left++){
                 for (auto idx_right = permutation_width.begin(); idx_right != permutation_width.end(); idx_right++){
 
-                    Die Die_instance(die_padding, Compute_unit, Memory_unit, Communication_unit, *idx_up, *idx_down, *idx_left, *idx_right);
+                    Die Die_instance(die_padding, bandwidth_per_area, memory_bandwidth_ratio, Compute_unit, Memory_unit, Communication_unit, *idx_up, *idx_down, *idx_left, *idx_right);
                     Wafer Wafer_instance(wafer_sizes, Die_instance);
                     // check whether the solution meets the minimal performance metrics
                     if (is_over_threshold(Wafer_instance, threshold)){

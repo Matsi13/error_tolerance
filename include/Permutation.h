@@ -31,7 +31,7 @@ bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_widt
 bool is_better_wafer(Wafer& first, Wafer& second);
 
 // find the optimal wafers that meets the threshold
-void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width, Threshold threshold);
+void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, float bandwidth_per_area, float memory_bandwidth_ratio, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width, Threshold threshold);
 
 
 #endif

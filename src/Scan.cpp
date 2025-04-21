@@ -47,6 +47,10 @@ void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Com
     input >> title;
     input >> input_config.die_padding;
     input >> title;
+    input >> input_config.bandwidth_per_area;
+    input >> title;
+    input >> input_config.memory_bandwidth_ratio;
+    input >> title;
     input >> input_config.relaxation;
     
     input >> title;

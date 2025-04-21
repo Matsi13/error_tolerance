@@ -10,9 +10,11 @@
 
 using namespace std;
 
-Die::Die(float padding, Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, string& up, string& down, string& left, string& right){
+Die::Die(float padding, float bandwidth_per_area, float memory_bandwidth_ratio, Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, string& up, string& down, string& left, string& right){
 
     this->padding = padding;
+    this->bandwidth_per_area = bandwidth_per_area;
+    this->memory_bandwidth_ratio = memory_bandwidth_ratio;
     this->Compute_unit = Compute_unit;
     this->Memory_unit = Memory_unit;
     this->Communication_unit = Communication_unit;
@@ -29,6 +31,8 @@ Die::Die(float padding, Compute& Compute_unit, Memory& Memory_unit, Communicatio
 Die::Die(const Die& obj){
 
     this->padding = obj.get_padding();
+    this->bandwidth_per_area = obj.get_bandwidth_per_area();
+    this->memory_bandwidth_ratio = obj.get_memory_bandwidth_ratio();
     this->Compute_unit = obj.get_Compute_unit();
     this->Memory_unit = obj.get_Memory_unit();
     this->Communication_unit = obj.get_Communication_unit();
@@ -47,6 +51,8 @@ Die& Die::operator = (const Die &obj){
     if (this != &obj){
 
         this->padding = obj.get_padding();
+        this->bandwidth_per_area = obj.get_bandwidth_per_area();
+        this->memory_bandwidth_ratio = obj.get_memory_bandwidth_ratio();
         this->Compute_unit = obj.get_Compute_unit();
         this->Memory_unit = obj.get_Memory_unit();
         this->Communication_unit = obj.get_Communication_unit();
@@ -85,6 +91,20 @@ const float Die::get_padding()const{
 
     return padding;
     
+}
+
+
+const float Die::get_bandwidth_per_area()const{
+
+    return bandwidth_per_area;
+
+}
+
+
+const float Die::get_memory_bandwidth_ratio()const{
+
+    return memory_bandwidth_ratio;
+
 }
 
 
@@ -559,14 +579,37 @@ void Die::update_communication_bandwidth(){
 }
 
 
+void Die::update_bandwidth(){
+    
+    update_memory_bandwidth();
+    update_communication_bandwidth();
+
+    float memory_bandwidth = get_memory_bandwidth();
+    float communication_bandwidth = get_communication_bandwidth();
+    float total_bandwidth = Compute_unit.get_size(0) * Compute_unit.get_size(1) * bandwidth_per_area;
+
+    if (total_bandwidth < memory_bandwidth + communication_bandwidth){
+
+        memory_bandwidth = min(memory_bandwidth, total_bandwidth * memory_bandwidth_ratio);
+        communication_bandwidth = min(communication_bandwidth, total_bandwidth * memory_bandwidth_ratio);
+
+    }
+
+    set_memory_bandwidth(memory_bandwidth);
+    set_communication_bandwidth(communication_bandwidth);
+
+    return;
+
+}
+
+
 void Die::update(){
 
     update_size(); 
     update_TFLOPS(); 
     update_DRAM_capacity(); 
     update_SRAM_capacity();
-    update_memory_bandwidth(); 
-    update_communication_bandwidth(); 
+    update_bandwidth(); 
     return;
 
 }
@@ -584,9 +627,7 @@ void Die::set_padding(float padding){
 void Die::set_Compute_unit(Compute& new_Compute_unit){
 
     this->Compute_unit = new_Compute_unit;
-    update_size();
-    update_TFLOPS();
-    update_SRAM_capacity();
+    update();
     return;
     
 }
@@ -595,9 +636,7 @@ void Die::set_Compute_unit(Compute& new_Compute_unit){
 void Die::set_Memory_unit(Memory& new_Memory_unit){
 
     this->Memory_unit = new_Memory_unit;
-    update_size();
-    update_DRAM_capacity();
-    update_memory_bandwidth();
+    update();
     return;
 
 }
@@ -606,8 +645,7 @@ void Die::set_Memory_unit(Memory& new_Memory_unit){
 void Die::set_Communication_unit(Communication& new_Communication_unit){
 
     this->Communication_unit = new_Communication_unit;
-    update_size();
-    update_communication_bandwidth();
+    update();
     return;
 
 }

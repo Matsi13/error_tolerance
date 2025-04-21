@@ -14,13 +14,15 @@ using namespace std;
 class Die{
     public: 
         Die(){};
-        Die(float padding, Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, string& up, string& down, string& left, string& right);
+        Die(float padding, float bandwidth_per_area, float memory_bandwidth_ratio, Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, string& up, string& down, string& left, string& right);
         Die(const Die& obj);
         Die& operator = (const Die &obj);
         ~Die();
 
         const float get_size(int index)const;
         const float get_padding()const;
+        const float get_bandwidth_per_area()const;
+        const float get_memory_bandwidth_ratio()const;
         const float get_TFLOPS()const;
         const float get_SRAM_capacity()const;
         const float get_DRAM_capacity()const;
@@ -34,7 +36,9 @@ class Die{
         const string get_permutation_left()const;
         const string get_permutation_right()const;
 
-        void set_padding(float padding);   
+        void set_padding(float padding); 
+        void set_bandwidth_per_area(float bandwidth_per_area);
+        void set_memory_bandwidth_ratio(float memory_bandwidth_ratio);  
         void set_Compute_unit(Compute &new_Compute_unit); 
         void set_Memory_unit(Memory &new_Memory_unit);
         void set_Communication_unit(Communication &new_Communication_unit);   
@@ -53,6 +57,8 @@ class Die{
         float DRAM_capacity;
         float memory_bandwidth;
         float communication_bandwidth;
+        float bandwidth_per_area; // in 2.5D package, the bandwidth available is limited by the area of compute core
+        float memory_bandwidth_ratio; // the most percentage of bandwidth that can be used for memory access 
         Compute Compute_unit;
         Memory Memory_unit;
         Communication Communication_unit;
@@ -77,8 +83,8 @@ class Die{
         void update_DRAM_capacity(); // update capacity based on memory units
         void update_memory_bandwidth(); // update memory bandwidth based on based on memory units
         void update_communication_bandwidth(); // update communication bandwidth based on communication units
+        void update_bandwidth(); // update memory and communication bandwidth with thershold
         void update(); // update size, padding, TFLOPS, capacity and bandwidth based on the new permutation
-
 
 };
 

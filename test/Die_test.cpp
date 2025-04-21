@@ -30,13 +30,15 @@ int main(){
     float Communication_padding = 0.3;
     Communication Communication_unit(Communication_sizes, Communication_bandwidth, Communication_padding);
 
-    float Die_padding = 2;
+    float die_padding = 2;
+    float bandwidth_per_area = 1;
+    float memory_bandwidth_ratio = 0.6;
     string up = {MEMORY_UNIT, MEMORY_UNIT};
     string down = {MEMORY_UNIT, MEMORY_UNIT};
     string left = {MEMORY_UNIT, COMMUNICATION_UNIT, COMMUNICATION_UNIT, MEMORY_UNIT};
     string right = {MEMORY_UNIT, COMMUNICATION_UNIT, COMMUNICATION_UNIT, MEMORY_UNIT};
 
-    Die Die_instance(Die_padding, Compute_unit, Memory_unit, Communication_unit, up, down, left, right);
+    Die Die_instance(die_padding, bandwidth_per_area, memory_bandwidth_ratio, Compute_unit, Memory_unit, Communication_unit, up, down, left, right);
     // cout << Die_instance.get_size(0) << endl;
     // cout << Die_instance.get_size(1) << endl;
     assert(Die_instance.get_size(0) == 26);
