@@ -22,7 +22,8 @@ class Die{
         const float get_size(int index)const;
         const float get_padding()const;
         const float get_TFLOPS()const;
-        const float get_capacity()const;
+        const float get_SRAM_capacity()const;
+        const float get_DRAM_capacity()const;
         const float get_memory_bandwidth()const;
         const float get_communication_bandwidth()const;
         const Compute get_Compute_unit()const;
@@ -48,7 +49,8 @@ class Die{
         float sizes[2];
         float padding;
         float TFLOPS;
-        float capacity;
+        float SRAM_capacity;
+        float DRAM_capacity;
         float memory_bandwidth;
         float communication_bandwidth;
         Compute Compute_unit;
@@ -63,13 +65,16 @@ class Die{
 
         void set_size(float size, int index);
         void set_TFLOPS(float TFLOPS);
-        void set_capacity(float capacity);
+        void set_SRAM_capacity(float capacity);
+        void set_DRAM_capacity(float capacity);
+
         void set_memory_bandwidth(float memory_bandwidth);
         void set_communication_bandwidth(float communication_bandwidth);
         
         void update_size(); // update size based on all units
         void update_TFLOPS(); // update TFLOPS based on compute unit
-        void update_capacity(); // update capacity based on memory units
+        void update_SRAM_capacity(); // update capacity based on memory units
+        void update_DRAM_capacity(); // update capacity based on memory units
         void update_memory_bandwidth(); // update memory bandwidth based on based on memory units
         void update_communication_bandwidth(); // update communication bandwidth based on communication units
         void update(); // update size, padding, TFLOPS, capacity and bandwidth based on the new permutation

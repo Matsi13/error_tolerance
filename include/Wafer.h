@@ -15,7 +15,8 @@ class Wafer{
 
         const float get_size(int idx)const; 
         const float get_TFLOPS()const;
-        const float get_capacity()const;
+        const float get_SRAM_capacity()const;
+        const float get_DRAM_capacity()const;
         const float get_memory_bandwidth()const;
         const float get_communication_bandwidth()const;
         const Die get_die()const;
@@ -25,7 +26,8 @@ class Wafer{
     private:
         float sizes[2];
         float TFLOPS;
-        float capacity;
+        float SRAM_capacity;
+        float DRAM_capacity;
         float memory_bandwidth;
         float communication_bandwidth;
         Die die;

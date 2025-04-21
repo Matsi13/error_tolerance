@@ -35,7 +35,9 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
     input >> title;
     input >> input_config.threshold.TFLOPS;
     input >> title;
-    input >> input_config.threshold.capacity;
+    input >> input_config.threshold.SRAM_capacity;
+    input >> title;
+    input >> input_config.threshold.DRAM_capacity;
     input >> title;
     input >> input_config.threshold.memory_bandwidth;
     input >> title;
@@ -46,6 +48,7 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
     input >> num;
 
     float TFLOPS_per_area;
+    float SRAM_capacity_per_area;
     float compute_length_min;
     float compute_length_max;
     float compute_length_stride;
@@ -58,6 +61,8 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
 
         input >> title;
         input >> TFLOPS_per_area;
+        input >> title;
+        input >> SRAM_capacity_per_area;
         input >> title;
         input >> compute_length_min >> compute_length_stride >> compute_length_max;
         input >> title;
@@ -76,8 +81,9 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
 
                 float compute_width = compute_width_min + k * compute_width_stride;
                 float TFLOPS = compute_length * compute_width * TFLOPS_per_area;
+                float SRAM_capacity = compute_length * compute_width * SRAM_capacity_per_area;
                 float compute_sizes[2] = {compute_length, compute_width};
-                Compute compute_instance(compute_sizes, TFLOPS, compute_padding);
+                Compute compute_instance(compute_sizes, TFLOPS, compute_padding, SRAM_capacity);
                 compute_configs.push_back(compute_instance);
 
             }

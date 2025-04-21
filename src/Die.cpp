@@ -95,9 +95,16 @@ const float Die::get_TFLOPS()const{
 }
 
 
-const float Die::get_capacity()const{
+const float Die::get_DRAM_capacity()const{
     
-    return capacity;
+    return DRAM_capacity;
+
+}
+
+
+const float Die::get_SRAM_capacity()const{
+    
+    return SRAM_capacity;
 
 }
 
@@ -180,9 +187,17 @@ void Die::set_TFLOPS(float TFLOPS){
 }
 
 
-void Die::set_capacity(float capacity){
+void Die::set_DRAM_capacity(float capacity){
 
-    this->capacity = capacity;
+    this->DRAM_capacity = capacity;
+    return;
+    
+}
+
+
+void Die::set_SRAM_capacity(float capacity){
+
+    this->SRAM_capacity = capacity;
     return;
     
 }
@@ -362,7 +377,7 @@ void Die::update_TFLOPS(){
 }
 
 
-void Die::update_capacity(){
+void Die::update_DRAM_capacity(){
 
     float capacity = 0;
 
@@ -414,8 +429,16 @@ void Die::update_capacity(){
 
     }
     
-    set_capacity(capacity);
+    set_DRAM_capacity(capacity);
     return;
+
+}
+
+
+void Die::update_SRAM_capacity(){
+
+    float capacity = Compute_unit.get_capacity();
+    set_SRAM_capacity(capacity);
 
 }
 
@@ -540,7 +563,8 @@ void Die::update(){
 
     update_size(); 
     update_TFLOPS(); 
-    update_capacity(); 
+    update_DRAM_capacity(); 
+    update_SRAM_capacity();
     update_memory_bandwidth(); 
     update_communication_bandwidth(); 
     return;
@@ -562,6 +586,7 @@ void Die::set_Compute_unit(Compute& new_Compute_unit){
     this->Compute_unit = new_Compute_unit;
     update_size();
     update_TFLOPS();
+    update_SRAM_capacity();
     return;
     
 }
@@ -571,7 +596,7 @@ void Die::set_Memory_unit(Memory& new_Memory_unit){
 
     this->Memory_unit = new_Memory_unit;
     update_size();
-    update_capacity();
+    update_DRAM_capacity();
     update_memory_bandwidth();
     return;
 
@@ -618,6 +643,7 @@ void Die::set_permutation_right(string& new_permutation){
     update();
     
 }
+
 
 void Die::print(){
 

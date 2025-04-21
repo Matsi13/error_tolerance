@@ -22,6 +22,7 @@ void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Com
 
     float compute_sizes[2];
     float TFLOPS;
+    float SRAM_capacity;
     float compute_padding;
 
     float memory_sizes[2];
@@ -51,7 +52,9 @@ void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Com
     input >> title;
     input >> input_config.threshold.TFLOPS;
     input >> title;
-    input >> input_config.threshold.capacity;
+    input >> input_config.threshold.SRAM_capacity;
+    input >> title;
+    input >> input_config.threshold.DRAM_capacity;
     input >> title;
     input >> input_config.threshold.memory_bandwidth;
     input >> title;
@@ -65,8 +68,10 @@ void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Com
         input >> title;
         input >> TFLOPS;
         input >> title;
+        input >> SRAM_capacity;
+        input >> title;
         input >> compute_padding;
-        Compute Compute_unit(compute_sizes, TFLOPS, compute_padding);
+        Compute Compute_unit(compute_sizes, TFLOPS, compute_padding, SRAM_capacity);
         compute_configs.push_back(Compute_unit);
     }
 

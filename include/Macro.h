@@ -14,7 +14,8 @@
 struct Threshold{
 
     float TFLOPS;
-    float capacity;
+    float SRAM_capacity;
+    float DRAM_capacity;
     float memory_bandwidth;
     float communication_bandwidth;
 
@@ -37,8 +38,10 @@ struct Config{
 struct simulation_error{
     float TFLOPS_positive;
     float TFLOPS_negative;
-    float capacity_positive;
-    float capacity_negative;
+    float SRAM_capacity_positive;
+    float SRAM_capacity_negative;
+    float DRAM_capacity_positive;
+    float DRAM_capacity_negative;
     float memory_bandwidth_positive;
     float memory_bandwidth_negative;
     float communication_bandwidth_positive;
@@ -49,7 +52,8 @@ struct simulation_error{
 // the distance between two solutions
 struct solution_distance{
     float TFLOPS;
-    float capacity;
+    float SRAM_capacity;
+    float DRAM_capacity;
     float memory_bandwidth;
     float communication_bandwidth;
 };

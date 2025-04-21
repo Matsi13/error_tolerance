@@ -8,7 +8,9 @@ relaxation :
 0
 min_TFLOPS : 
 300
-min_capacity : 
+min_SRAM_capacity :
+150
+min_DRAM_capacity : 
 200
 min_memory_bandwidth :
 250
@@ -20,13 +22,15 @@ sizes:
 16 12
 TFLOPS : 
 10
+SRAM_capacity:
+5
 padding :
 0
 available memory unit(s) :
 1
 sizes :
 5 5
-capacity : 
+DRAM_capacity : 
 4
 bandwidth :
 10

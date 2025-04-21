@@ -8,6 +8,8 @@ relaxation :
 0
 min TFLOPS : 
 300
+min SRAM_capacity :
+150
 min capacity : 
 200
 min memory bandwidth :
@@ -18,6 +20,8 @@ available compute chip types :
 1
 TFLOPS per area :
 0.05
+SRAM capacity per area :
+0.025
 compute chip length :
 14 2 16
 compute chip width :
@@ -26,7 +30,7 @@ compute chip padding :
 0
 available memory types :
 1
-capacity per area :
+DRAM capacity per area :
 0.16
 bandwidth per length :
 2

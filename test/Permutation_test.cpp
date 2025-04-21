@@ -21,8 +21,9 @@ int main(){
 
     float compute_sizes[2] = {16, 12};
     float TFLOPS = 10;
+    float SRAM_capacity = 5;
     float compute_padding = 0;
-    Compute compute_unit(compute_sizes, TFLOPS, compute_padding);
+    Compute compute_unit(compute_sizes, TFLOPS, SRAM_capacity, compute_padding);
 
     float memory_sizes[2] = {5, 5};
     float capacity = 4;

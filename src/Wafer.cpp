@@ -11,6 +11,7 @@ Wafer::Wafer(float* sizes, Die& die){
     this->sizes[1] = sizes[1];
     this->die = die;
     update();
+    return;
 }
 
 
@@ -20,6 +21,7 @@ Wafer::Wafer(const Wafer& obj){
     this->sizes[1] = obj.get_size(1);
     this->die = obj.get_die();
     update();
+    return;
 
 }
 
@@ -42,7 +44,8 @@ Wafer& Wafer::operator = (const Wafer &obj){
 
 void Wafer::print(){
 
-    cout << TFLOPS<< " " << capacity << " " << memory_bandwidth << " " << communication_bandwidth << endl;
+    cout << TFLOPS<< " " << SRAM_capacity << DRAM_capacity << " " << memory_bandwidth << " " << communication_bandwidth << endl;
+    return;
 
 }
 
@@ -61,9 +64,16 @@ const float Wafer::get_TFLOPS()const{
 }
 
 
-const float Wafer::get_capacity()const{
+const float Wafer::get_SRAM_capacity()const{
 
-    return capacity;
+    return SRAM_capacity;
+
+}
+
+
+const float Wafer::get_DRAM_capacity()const{
+
+    return DRAM_capacity;
 
 }
 
@@ -92,6 +102,8 @@ void Wafer::set_die(Die& newdie){
     this->die = newdie;
     update();
 
+    return;
+
 }
 
 
@@ -102,9 +114,12 @@ void Wafer::update(){
     int columns = floor(sizes[1] / die_sizes[1]);
     int die_num = rows * columns;
     this->TFLOPS = die.get_TFLOPS() * die_num;
-    this->capacity = die.get_capacity() * die_num;
+    this->SRAM_capacity = die.get_SRAM_capacity() * die_num;
+    this->DRAM_capacity = die.get_DRAM_capacity() * die_num;
     this->memory_bandwidth = die.get_memory_bandwidth() * die_num;
     this->communication_bandwidth = die.get_communication_bandwidth() * die_num;
+
+    return;
 
 }
 
