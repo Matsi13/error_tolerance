@@ -117,6 +117,7 @@ const int Attention::get_d_q()const{
 
 }
 
+
 const int Attention::get_d_k()const{
 
     return d_k;
@@ -192,6 +193,7 @@ void Attention::set_d_q(int d_q){
     this->d_q = d_q;
 
 }
+
 
 void Attention::set_d_k(int d_k){
 
@@ -301,7 +303,7 @@ void Attention::update_TFLOPs(){
     float attention_score_decode_TFLOPs = d_k * head_num * (2 * prompt_avg + output_avg + 1) * output_avg * 1e-12; 
     float softmax_decode_TFLOPs = 3 * (2 * prompt_avg + 1 + output_avg) * output_avg;
     float dot_product_decode_TFLOPs = d_v * head_num * (2 * prompt_avg + 1 + output_avg) * output_avg * 1e-12;
-    float linear_decode_TFLOPs = head_num * d_v * d_hidden * 1/2 * (2 * prompt_avg + 1 + output_avg) * output_avg * 1e-12;
+    float linear_decode_TFLOPs = head_num * d_v * d_hidden  * (2 * prompt_avg + 1 + output_avg) * output_avg * 1e-12;
 
     float decode_TFLOPs = norm_decode_TFLOPs + linear_0_decode_TFLOPs + q_decode_TFLOPs + k_decode_TFLOPs + v_decode_TFLOPs + RoPE_decode_TFLOPs + attention_score_decode_TFLOPs + softmax_decode_TFLOPs + dot_product_decode_TFLOPs + linear_decode_TFLOPs;
 
@@ -400,9 +402,10 @@ void Attention::update_traffic(){
 
 void Attention::update(){
 
-    void update_TFLOPs();
-    void update_paramsize();
-    void update_access();
-    void update_traffic();
+    update_TFLOPs();
+    update_paramsize();
+    update_access();
+    update_traffic();
 
 }
+

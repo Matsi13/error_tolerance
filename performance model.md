@@ -26,7 +26,7 @@
 
 如果有一项性能指标无法满足，那么怎样建模惩罚项以模拟实际情况呢？
 
-计算核内部加上SRAM？
+
 
 ## 6、case study
 
@@ -146,6 +146,12 @@ $d_v * head\_num * (2 * prompt\_len + 1 + output\_len) * output\_len $
 
 ### 6.1.8 linear_1
 
-prefill阶段的计算量为$prompt\_len * d_v * d\_hidden * 2$
+linear_1的权重大小为$d_v\times d_{hidden}\times head\_num$
 
-decode阶段，设当前生成到第$x$个token，则输出的V的尺寸为
+prefill阶段的计算量为$prompt\_len * d_v * d_{hidden} * 2$
+
+decode阶段，设当前生成到第$x$个token，则输出的V的尺寸为$(prompt\_len + x - 1) \times d_v \times head\_num$，计算量为$(prompt\_len + x - 1) * d_v * d_{hidden} * head\_num * 2$
+
+$x = 1, ..., output\_len$，求和得到decode阶段的总计算量
+
+$d_v * d_{hidden} * head\_num * (2 * prompt\_len + output\_len) $

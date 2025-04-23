@@ -25,3 +25,7 @@ add_test(NAME Scan_test COMMAND Scan_test)
 add_executable(Generate_test Generate_test.cpp)
 target_link_libraries(Generate_test generate_lib permutation_lib)
 add_test(NAME Generate_test COMMAND Generate_test)
+
+add_executable(Attention_test Attention_test.cpp)
+target_link_libraries(Attention_test attention_lib)
+add_test(NAME Attention_test COMMAND Attention_test)

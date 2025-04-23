@@ -10,6 +10,10 @@
 #define INFERENCE 0
 #define TRAINING 1
 
+#define SOFTMAX 0
+#define RELU 1
+#define TANH 2
+
 // the minimal performance metrics that the wafer must satisfy
 struct Threshold{
 

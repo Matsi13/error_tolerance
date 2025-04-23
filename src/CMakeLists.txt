@@ -63,3 +63,8 @@ add_library(workload_lib
 Workload.cpp
 )
 
+add_library(attention_lib
+Workload.cpp
+Attention.cpp
+)
+
