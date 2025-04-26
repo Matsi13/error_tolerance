@@ -68,3 +68,9 @@ Workload.cpp
 Attention.cpp
 )
 
+add_library(analysis_lib
+Analysis.cpp 
+Wafer.cpp
+Workload.cpp
+)
+

@@ -64,4 +64,26 @@ struct solution_distance{
     float communication_bandwidth;
 };
 
+
+struct Exec_time_range{
+
+    float time_min;
+    float time_standard;
+    float time_max;
+
+
+};
+
+struct Workload_error{
+    float TFLOPs_positive;
+    float TFLOPs_negative;
+    float paramsize_positive;
+    float paramsize_negative;
+    float access_positive;
+    float access_negative;
+    float traffic_positive;
+    float traffic_negative;
+};
+
+
 #endif

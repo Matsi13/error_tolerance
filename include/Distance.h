@@ -13,6 +13,6 @@
 solution_distance calculate_distance(Wafer& first, Wafer& second); 
 
 // return the possible optimals among the solutions, based on current optimal and error
-void Possible_optimal(queue<Wafer> solutions, Wafer& optimal, simulation_error& error, queue<Wafer>& possible_optimals); 
+// void Possible_optimal_hardward(queue<Wafer> solutions, Wafer& optimal, simulation_error& error, queue<Wafer>& possible_optimals); 
 
 #endif
