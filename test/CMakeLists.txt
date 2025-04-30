@@ -29,3 +29,8 @@ add_test(NAME Generate_test COMMAND Generate_test)
 add_executable(Attention_test Attention_test.cpp)
 target_link_libraries(Attention_test attention_lib)
 add_test(NAME Attention_test COMMAND Attention_test)
+
+add_executable(Pipeline_test Pipeline_test.cpp)
+target_link_libraries(Pipeline_test pipeline_lib)
+add_test(NAME Pipeline_test COMMAND Pipeline_test)
+

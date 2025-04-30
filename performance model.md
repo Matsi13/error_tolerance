@@ -1,26 +1,38 @@
-## 4、性能评估模型
+## 1、性能评估模型
 
-### 4.1 类
+### 1.1 类
 
-#### 4.1.1 workload
+#### 1.1.1 workload
 
 计算量，存储量，通信量
 
 是所有神经网络的父类
 
-#### 4.1.2 神经网络（以LLM为例）
+#### 1.1.2 神经网络（以LLM为例）
 
 继承workload，可以有自己的各种结构参数和优化方法，使用workload的接口返回基本的性能指标
 
-### 4.2 函数
+### 1.2 函数
 
 输入架构参数和workload，返回性能。如果capacity不足，惩罚项为访问片下存储的时间。
 
+workload的merge和split：
+
+merge：通信取消，计算存储作和
+
+将同一个die上的workload merge到一起
+
+split：增加通信（根据不同的切分方式，通信量会与权重的size有关），计算存储平分（也可能引入一些额外的计算）
+
+在die级别，并行是粗粒度的。主要会发生的是merge，因此主要是取消一些通信，增加计算存储。数据并行直接换成调batchsize，模型并行不使用，流水并行主要是分析断点在哪里
+
+重计算需要重点分析。假设最低的粒度是一个transformer block。规定每隔几层设置checkpoint，checkpoint处存储量与具体layer位置相关。考虑到die都是同质的，将多余的权重变成通信，分给其他的die（因为我们分析的是理论上的最佳性能）
 
 
 
 
-## 5、随想：
+
+## 2、随想：
 
 如果可以在一个计算单元周围集成多种存储单元，多种通信单元，应该如何修改代码呢？
 
@@ -28,15 +40,15 @@
 
 
 
-## 6、case study
+## 3、case study
 
 以llama中attention模块为例，分析其推理和训练过程中的计算访存通信量。（每个符号的具体含义见代码）
 
-### 6.1 计算量
+### 3.1 计算量
 
 使用kv\_cache技术（https://blog.csdn.net/scgaliguodong123_/article/details/143749176）
 
-#### 6.1.1 Norm
+#### 3.1.1 Norm
 
 https://blog.csdn.net/yjw123456/article/details/138139970
 
@@ -64,7 +76,7 @@ RMSNorm:  $output\_len * d_{model} * 4$
 
 LayerNorm: $output\_len * d_{model} * 8$
 
-### 6.1.2 Linear_0
+### 3.1.2 Linear_0
 
 矩阵大小为$d_{model}\times d_{model}$
 
@@ -78,7 +90,7 @@ $x=prompt\_len + 1, ..., prompt\_len + output\_len$，求和，得到整个decod
 
 $d_{model} * d_{model} * output\_len * 2$
 
-### 6.1.3 QKV
+### 3.1.3 QKV
 
 矩阵大小依次为$W_Q:d_{model} * d_q * head\_num * 2, W_K:d_{model} * d_k * head\_num * 2, W_V:d_{model} * d_v * head\_num * 2$，输入向量尺寸为$d_{model}$
 
@@ -92,7 +104,7 @@ $x=prompt\_len + 1, ..., prompt\_len + output\_len$，求和，得到整个decod
 
 $d_{model} * d_q * head\_num * output\_len * 2, d_{model} * d_k * head\_num * output\_len * 2, d_{model} * d_v * head\_num * output\_len * 2$
 
-### 6.1.4 RoPE
+### 3.1.4 RoPE
 
 https://www.zhihu.com/tardis/bd/art/647109286
 
@@ -106,7 +118,7 @@ $x=prompt\_len + 1, ..., prompt\_len + output\_len$，求和，得到整个decod
 
 $9 * d_q * head\_num * (2 * prompt\_len + 1 + output\_len) * output\_len / 2, 9 * d_k * head\_num * (2 * prompt\_len + 1 + output\_len) * output\_len / 2 $
 
-### 6.1.5 Attention Score
+### 3.1.5 Attention Score
 
 使用kv\_cache技术（https://blog.csdn.net/scgaliguodong123_/article/details/143749176）
 
@@ -120,7 +132,7 @@ $x = 1, ..., output\_len$， 求和得到decode阶段的总计算量
 
 $d_k * head\_num * (2 * prompt\_len + output\_len + 1) * output\_len $
 
-### 6.1.6 Softmax
+### 3.1.6 Softmax
 
 使用kv\_cache技术（https://blog.csdn.net/scgaliguodong123_/article/details/143749176）
 
@@ -134,7 +146,7 @@ $x = 1, ..., output\_len$，求和，得到decode阶段的总计算量
 
 $3 * (2 * prompt\_len + 1 + output\_len) * output\_len * head\_num $
 
-### 6.1.7 dot product with V
+### 3.1.7 dot product with V
 
 prefill阶段的计算量为$prompt\_len * prompt\_len * d_v * head\_num * 2$
 
@@ -144,7 +156,7 @@ $x = 1, ..., output\_len$ ，求和得到decode阶段的总计算量
 
 $d_v * head\_num * (2 * prompt\_len + 1 + output\_len) * output\_len $
 
-### 6.1.8 linear_1
+### 3.1.8 linear_1
 
 linear_1的权重大小为$d_v\times d_{hidden}\times head\_num$
 

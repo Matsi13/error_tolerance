@@ -74,3 +74,8 @@ Wafer.cpp
 Workload.cpp
 )
 
+add_library(pipeline_lib
+Pipeline.cpp 
+Workload.cpp
+)
+
