@@ -34,3 +34,7 @@ add_executable(Pipeline_test Pipeline_test.cpp)
 target_link_libraries(Pipeline_test pipeline_lib)
 add_test(NAME Pipeline_test COMMAND Pipeline_test)
 
+add_executable(Recompute_test Recompute_test.cpp)
+target_link_libraries(Recompute_test recompute_lib)
+add_test(NAME Recompute_test COMMAND Recompute_test)
+

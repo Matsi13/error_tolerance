@@ -79,3 +79,8 @@ Pipeline.cpp
 Workload.cpp
 )
 
+add_library(recompute_lib
+Recompute.cpp 
+Workload.cpp
+)
+
