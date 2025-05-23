@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 #include "Die.h"
 #include "Wafer.h"
