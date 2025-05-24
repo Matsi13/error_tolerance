@@ -22,34 +22,81 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
     int num;
     
     // read wafer configs
-    input >> title;
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.wafer_length;
-    input >> title;
+    getline(input, title);
+    // cout << input_config.wafer_length << endl;
+
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.wafer_width;
-    input >> title;
+    getline(input, title);
+    // cout << input_config.wafer_width << endl;
+
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.die_padding;
-    input >> title;
+    getline(input, title);
+    // cout << input_config.die_padding << endl;
+
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.bandwidth_per_area;
-    input >> title;
+    getline(input, title);
+    // cout << input_config.bandwidth_per_area << endl;
+
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.memory_bandwidth_ratio;
-    input >> title;
+    getline(input, title);
+    // cout << input_config.memory_bandwidth_ratio << endl;
+
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.relaxation;
+    getline(input, title);
+    // cout << input_config.relaxation << endl;
 
     // read performace threshold
-    input >> title;
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.threshold.TFLOPS;
-    input >> title;
+    getline(input, title);
+    // cout << input_config.threshold.TFLOPS << endl;
+
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.threshold.SRAM_capacity;
-    input >> title;
+    getline(input, title);
+    // cout << input_config.threshold.SRAM_capacity << endl;
+
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.threshold.DRAM_capacity;
-    input >> title;
+    getline(input, title);
+    // cout << input_config.threshold.DRAM_capacity << endl;
+
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.threshold.memory_bandwidth;
-    input >> title;
+    getline(input, title);
+    // cout << input_config.threshold.memory_bandwidth << endl;
+
+    getline(input, title);
+    // cout << title << endl;
     input >> input_config.threshold.communication_bandwidth;
+    getline(input, title);
+    // cout << input_config.threshold.communication_bandwidth << endl;
 
     // generate compute configs
-    input >> title;
+    getline(input, title);
+    // cout << title << endl;
     input >> num;
+    getline(input, title);
+    // cout << num << endl;
+
+    // cout << "Compute chip numbers : " << num << endl;
 
     float TFLOPS_per_area;
     float SRAM_capacity_per_area;
@@ -63,16 +110,36 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
 
     for (int i = 0; i < num; i++){
 
-        input >> title;
+        getline(input, title);
+        // cout << title << endl;
         input >> TFLOPS_per_area;
-        input >> title;
+        getline(input, title);
+        // cout << TFLOPS_per_area << endl;
+       
+
+        getline(input, title);
+        // cout << title << endl;
         input >> SRAM_capacity_per_area;
-        input >> title;
+        getline(input, title);
+        // cout << SRAM_capacity_per_area << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> compute_length_min >> compute_length_stride >> compute_length_max;
-        input >> title;
+        getline(input, title);
+        // cout << compute_length_min << ' ' << compute_length_stride << ' ' << compute_length_max << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> compute_width_min >> compute_width_stride >> compute_width_max;
-        input >> title;
+        getline(input, title);
+        // cout << compute_width_min << ' ' << compute_width_stride << ' ' << compute_width_max << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> compute_padding;
+        getline(input, title);
+        // cout << compute_padding << endl;
 
         int length_num = (compute_length_min == compute_length_max) ? 1 : floor((compute_length_max - compute_length_min) / compute_length_stride);
         int width_num = (compute_width_min == compute_width_max) ? 1 : floor((compute_width_max - compute_width_min) / compute_width_stride);
@@ -96,8 +163,11 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
     }
 
     // generate memory configs
-    input >> title;
+    getline(input, title);
+    // cout << title << endl;
     input >> num;
+    getline(input, title);
+    // cout << num << endl;
 
     float capacity_per_area;
     float memory_bandwidth_per_length;
@@ -111,16 +181,35 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
 
     for (int i = 0; i < num; i++){
 
-        input >> title;
+        getline(input, title);
+        // cout << title << endl;
         input >> capacity_per_area;
-        input >> title;
+        getline(input, title);
+        // cout << capacity_per_area << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> memory_bandwidth_per_length;
-        input >> title;
+        getline(input, title);
+        // cout << memory_bandwidth_per_length << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> memory_length_min >> memory_length_stride >> memory_length_max;
-        input >> title;
+        getline(input, title);
+        // cout << memory_length_min << ' ' << memory_length_stride << ' ' << memory_length_stride << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> memory_width_min >> memory_width_stride >> memory_width_max;
-        input >> title;
+        getline(input, title);
+        // cout << memory_width_min << ' ' << memory_width_stride << ' ' << memory_width_max << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> memory_padding;
+        getline(input, title);
+        // cout << memory_padding << endl;
 
         int length_num = (memory_length_min == memory_length_max) ? 1 : floor((memory_length_max - memory_length_min) / memory_length_stride);
         int width_num = (memory_width_min == memory_width_max) ? 1 : floor((memory_width_max - memory_width_min) / memory_width_stride);
@@ -142,8 +231,11 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
         }
     }
 
-    input >> title;
+    getline(input, title);
+    // cout << title << endl;
     input >> num;
+    getline(input, title);
+    // cout << num << endl;
 
     float communication_bandwidth_per_length;
     float communication_length_min, communication_length_max, communication_length_stride;
@@ -152,14 +244,29 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
 
     for (int i = 0; i < num; i++){
 
-        input >> title;
+        getline(input, title);
+        // cout << title << endl;
         input >> communication_bandwidth_per_length;
-        input >> title;
+        getline(input, title);
+        // cout << communication_bandwidth_per_length << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> communication_length_min >> communication_length_stride >> communication_length_max;
-        input >> title;
+        getline(input, title);
+        // cout << communication_length_min << ' ' << communication_length_stride << ' ' << communication_length_max << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> communication_width_min >> communication_width_stride >> communication_width_max;
-        input >> title;
+        getline(input, title);
+        // cout << communication_width_min << ' ' << communication_width_stride << ' ' << communication_width_max << endl;
+
+        getline(input, title);
+        // cout << title << endl;
         input >> communication_padding;
+        getline(input, title);
+        // cout << communication_padding << endl;
 
         int length_num = (communication_length_min == communication_length_max) ? 1 : floor((communication_length_max - communication_length_min) / communication_length_stride);
         int width_num = (communication_width_min == communication_width_max) ? 1 : floor((communication_width_max - communication_width_min) / communication_width_stride);
