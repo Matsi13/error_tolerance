@@ -86,4 +86,19 @@ struct Workload_error{
 };
 
 
+struct Arch_error{
+
+    float TFLOPS_positive;
+    float TFLOPS_negative;
+    float SRAM_capacity_positive;
+    float SRAM_capacity_negative;
+    float DRAM_capacity_positive;
+    float DRAM_capacity_negative;
+    float memory_bandwidth_positive;
+    float memory_bandwidth_negative;
+    float communication_bandwidth_positive;
+    float communication_bandwidth_negative;
+
+};
+
 #endif

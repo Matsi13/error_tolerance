@@ -1,7 +1,7 @@
 #ifndef DISTANCE_H
 #define DISTANCE_H
 
-#include <queue>
+#include <list>
 #include <cmath>
 
 #include "Macro.h"
@@ -13,6 +13,6 @@
 solution_distance calculate_distance(Wafer& first, Wafer& second); 
 
 // return the possible optimals among the solutions, based on current optimal and error
-// void Possible_optimal_hardward(queue<Wafer> solutions, Wafer& optimal, simulation_error& error, queue<Wafer>& possible_optimals); 
+void Possible_optimal(list<Wafer> solutions, Wafer& optimal, Arch_error& error, list<Wafer>& possible_optimals); 
 
 #endif

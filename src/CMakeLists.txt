@@ -41,6 +41,8 @@ Communication.cpp
 Die.cpp
 Wafer.cpp
 Distance.cpp
+Generate.cpp
+Permutation.cpp
 )
 
 add_library(scan_lib 
