@@ -42,3 +42,8 @@ add_executable(Distance_test Distance_test.cpp)
 target_link_libraries(Distance_test distance_lib)
 add_test(NAME Distance_test COMMAND Distance_test)
 
+add_executable(Analysis_test Analysis_test.cpp)
+target_link_libraries(Analysis_test analysis_lib wafer_lib permutation_lib workload_lib generate_lib)
+add_test(NAME Analysis_test COMMAND Analysis_test)
+
+

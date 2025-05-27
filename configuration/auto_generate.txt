@@ -11,15 +11,15 @@ memory_bandwidth_ratio:
 relaxation :
 0
 min TFLOPS : 
-300
-min SRAM_capacity :
-150
-min capacity : 
 200
+min SRAM_capacity :
+100
+min capacity : 
+100
 min memory bandwidth :
-250
+100
 min communication bandwidth :
-400
+200
 available compute chip types :
 1
 TFLOPS per area :
@@ -27,11 +27,11 @@ TFLOPS per area :
 SRAM capacity per area :
 0.025
 compute chip length :
-14 2 16
+12 1 17
 compute chip width :
-12 2 14
+10 1 15
 compute chip padding :
-0
+0.1
 available memory types :
 1
 DRAM capacity per area :
@@ -39,9 +39,9 @@ DRAM capacity per area :
 bandwidth per length :
 2
 memory length :
-5 1 6
+5 1 8
 memory width :
-5 1 6
+5 1 8
 memory padding :
 0.1
 available communication types :

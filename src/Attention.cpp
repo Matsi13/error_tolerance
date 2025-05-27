@@ -334,7 +334,7 @@ void Attention::update_TFLOPs(){
 
 void Attention::update_paramsize(){
 
-    float KV_cache_paramsize = (d_k + d_v) * (prompt_avg + output_avg) * sizeof(float) * 1e-10;
+    float KV_cache_paramsize = (d_k + d_v) * head_num * (prompt_avg + 2 * output_avg) * (output_avg + 1) / 2 *  sizeof(float) * 1e-9;
     Workload::set_paramsize(KV_cache_paramsize);
     return;
 

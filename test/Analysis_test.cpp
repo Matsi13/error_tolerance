@@ -11,6 +11,7 @@
 #include "Generate.h"
 #include "Permutation.h"
 #include "Distance.h"
+#include "Analysis.h"
 
 using namespace std;
 
@@ -54,26 +55,34 @@ int main(){
     advance(idx, index_mid);
     Wafer optimal = *idx;
     
-    Arch_error error;
+    Workload_error error;
 
-    error.TFLOPS_positive = 0.1;
-    error.TFLOPS_negative = 0;
-    error.SRAM_capacity_positive = 0;
-    error.SRAM_capacity_negative = 0;
-    error.DRAM_capacity_positive = 0;
-    error.DRAM_capacity_negative = 0;
-    error.memory_bandwidth_positive = 0;
-    error.memory_bandwidth_negative = 0;
-    error.communication_bandwidth_positive = 0;
-    error.communication_bandwidth_negative = 0;
+    error.TFLOPs_positive = 0;
+    error.TFLOPs_negative = 0;
+    error.paramsize_positive = 0;
+    error.paramsize_negative = 0;
+    error.access_positive = 0;
+    error.access_negative = 0;
+    error.traffic_positive = 0;
+    error.traffic_negative = 0;
+
+    Workload transformer_workload(4e8, 2e9, 2e10, 2e-5);
+    float off_wafer_bandwidth = 100;
 
     list<Wafer> possible_optimals;
 
     for(int i = 0; i < 20; i++){
 
-        error.TFLOPS_positive = i * 0.01;
-        Possible_optimal(solutions, optimal, error, possible_optimals);
-        cout << error.TFLOPS_positive << " " << possible_optimals.size() << endl;
+        error.TFLOPs_positive = i * 0.01;
+
+            for (int j = 0; j < 20; j++){
+
+                error.paramsize_positive = j * 0.01;
+                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
+                cout << error.TFLOPs_positive << " " << error.paramsize_positive << " " << possible_optimals.size() << endl;
+
+            }
+        
 
     }
 
