@@ -685,10 +685,12 @@ void Die::set_permutation_right(string& new_permutation){
 
 void Die::print(){
 
-    cout << "up: " << up << endl;
-    cout << "down" << down << endl;
-    cout << "left" << left << endl;
-    cout << "right" << right << endl;
+    cout << Compute_unit.get_size(0) << " " << Compute_unit.get_size(1) << " " << Compute_unit.get_TFLOPS() << " " << Compute_unit.get_capacity() << " " << Compute_unit.get_padding() << " ";
+    cout << Memory_unit.get_size(0) << " " << Memory_unit.get_size(1) << " " << Memory_unit.get_capacity() << " " << Memory_unit.get_bandwidth() << " " << Memory_unit.get_padding() << " ";
+    cout << Communication_unit.get_size(0) << " " << Communication_unit.get_size(1) << " " << Communication_unit.get_bandwidth() << " " << Communication_unit.get_padding() << " ";
+    cout << up << " " << down << " " << left << " " << right << " ";
+    
+
     return;
     
 }

@@ -18,8 +18,8 @@ void Possible_optimal_wafers(Workload workload, list<Wafer> &wafers, list<Wafer>
     float traffic = workload.get_traffic();
 
     float paramsize_min = (1 + error.paramsize_negative) * paramsize;
-    float access_min = (1 + error.access_negative) * access;
     float paramsize_max = (1 + error.paramsize_positive) * paramsize;
+    float access_min = (1 + error.access_negative) * access;  
     float access_max = (1 + error.access_positive) * access;
     float TFLOPs_min = (1 + error.TFLOPs_negative) * TFLOPs;
     float TFLOPs_max = (1 + error.TFLOPs_positive) * TFLOPs;
@@ -41,18 +41,18 @@ void Possible_optimal_wafers(Workload workload, list<Wafer> &wafers, list<Wafer>
         float compute_time_standard = TFLOPs/TFLOPS;
         float access_time_standard = ( (DRAM_capacity >= paramsize) ? (access / memory_bandwidth) : (access * DRAM_capacity / paramsize / memory_bandwidth + access * (1 - DRAM_capacity / paramsize) / off_wafer_bandwidth) ); 
         float communication_time_standard = traffic / communication_bandwidth;
-        exec_time_range.time_standard = min(min(compute_time_standard, access_time_standard), communication_time_standard);
+        exec_time_range.time_standard = max(max(compute_time_standard, access_time_standard), communication_time_standard);
 
         float compute_time_min = TFLOPs_min / TFLOPS;
         
         float access_time_min = ((DRAM_capacity >= paramsize_min) ? (access_min / memory_bandwidth) : (access_min * DRAM_capacity / paramsize_min / memory_bandwidth + access_min * (1 - DRAM_capacity / paramsize_min) / off_wafer_bandwidth) ); 
         float communication_time_min = traffic * (1 + error.traffic_negative) / communication_bandwidth;
-        exec_time_range.time_min = min(min(compute_time_min, access_time_min), communication_time_min);
+        exec_time_range.time_min = max(max(compute_time_min, access_time_min), communication_time_min);
 
         float compute_time_max = TFLOPs_max / TFLOPS;
         float access_time_max = ((DRAM_capacity >= paramsize_max) ? (access_max / memory_bandwidth) : (access_max * DRAM_capacity / paramsize_max / memory_bandwidth + access_max * (1 - DRAM_capacity / paramsize_max) / off_wafer_bandwidth) ); 
         float communication_time_max = traffic * (1 + error.traffic_positive) / communication_bandwidth;
-        exec_time_range.time_max = min(min(compute_time_max, access_time_max), communication_time_max);
+        exec_time_range.time_max = max(max(compute_time_max, access_time_max), communication_time_max);
 
         if(exec_time_range.time_standard < exec_time_opt) {
 

@@ -45,7 +45,9 @@ Wafer& Wafer::operator = (const Wafer &obj){
 
 void Wafer::print(){
 
-    cout << TFLOPS<< " " << SRAM_capacity  << " " << DRAM_capacity << " " << memory_bandwidth << " " << communication_bandwidth << endl;
+    cout << TFLOPS<< " " << SRAM_capacity  << " " << DRAM_capacity << " " << memory_bandwidth << " " << communication_bandwidth << " " << rows << " " << columns << " ";
+    this->die.print();
+    cout << endl;
     return;
 
 }
@@ -111,8 +113,8 @@ void Wafer::set_die(Die& newdie){
 void Wafer::update(){
 
     float die_sizes[2] = {die.get_size(0), die.get_size(1)};
-    int rows = floor(sizes[0] / die_sizes[0]);
-    int columns = floor(sizes[1] / die_sizes[1]);
+    this -> rows = floor(sizes[0] / die_sizes[0]);
+    this -> columns = floor(sizes[1] / die_sizes[1]);
     int die_num = rows * columns;
     this->TFLOPS = die.get_TFLOPS() * die_num;
     this->SRAM_capacity = die.get_SRAM_capacity() * die_num;
