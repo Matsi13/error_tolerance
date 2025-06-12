@@ -39,7 +39,7 @@ target_link_libraries(Recompute_test recompute_lib)
 add_test(NAME Recompute_test COMMAND Recompute_test)
 
 add_executable(Distance_test Distance_test.cpp)
-target_link_libraries(Distance_test distance_lib)
+target_link_libraries(Distance_test distance_lib generate_lib permutation_lib wafer_lib)
 add_test(NAME Distance_test COMMAND Distance_test)
 
 add_executable(Analysis_test Analysis_test.cpp)

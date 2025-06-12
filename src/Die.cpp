@@ -688,8 +688,7 @@ void Die::print(){
     cout << Compute_unit.get_size(0) << " " << Compute_unit.get_size(1) << " " << Compute_unit.get_TFLOPS() << " " << Compute_unit.get_capacity() << " " << Compute_unit.get_padding() << " ";
     cout << Memory_unit.get_size(0) << " " << Memory_unit.get_size(1) << " " << Memory_unit.get_capacity() << " " << Memory_unit.get_bandwidth() << " " << Memory_unit.get_padding() << " ";
     cout << Communication_unit.get_size(0) << " " << Communication_unit.get_size(1) << " " << Communication_unit.get_bandwidth() << " " << Communication_unit.get_padding() << " ";
-    cout << up << " " << down << " " << left << " " << right << " ";
-    
+    cout << up  << 9 << " " << down << 9 << " " << left << 9 << " " << right << 9 << " ";
 
     return;
     

@@ -17,11 +17,13 @@ using namespace std;
 
 int main(){
 
+    int catagory;
     int negative_flag;
     int iters;
     float stride;
 
-    cin >> negative_flag >> iters >> stride;
+
+    cin >> catagory >> negative_flag >> iters >> stride;
 
     string input_path("/data/login_home/lijinxi/error_tolerance/configuration/auto_generate.txt");
     list<Compute> compute_configs;
@@ -74,37 +76,85 @@ int main(){
 
     Workload transformer_workload(4e8, 2e9, 2e10, 2e-5);
     float off_wafer_bandwidth = 100;
-    
 
-    for(int i = 0; i < iters; i++){
+    switch (catagory) {
 
-        error.paramsize_positive = i * stride;
-        error.paramsize_negative = -negative_flag * i * stride;
-        list<Wafer> possible_optimals;
+        case TFLOPS_ERR : {
 
-        Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
-        cout << error.paramsize_positive << " " << possible_optimals.size() << endl;
+            for(int i = 0; i < iters; i++){
+
+                error.TFLOPs_positive = i * stride;
+                error.TFLOPs_negative = -negative_flag * i * stride;
+                list<Wafer> possible_optimals;
+
+                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
+                cout << error.TFLOPs_positive << " " << possible_optimals.size() << endl;
+
+            }
+
+            break;
+
+        }
+
+        case PARAM_ERR : {
+
+            for(int i = 0; i < iters; i++){
+
+                error.paramsize_positive = i * stride;
+                error.paramsize_negative = -negative_flag * i * stride;
+                list<Wafer> possible_optimals;
+
+                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
+                cout << error.paramsize_positive << " " << possible_optimals.size() << endl;
+
+            }
+
+            break;
+
+        }
+
+        case ACCESS_ERR : {
+
+            for(int i = 0; i < iters; i++){
+
+                error.access_positive = i * stride;
+                error.access_negative = -negative_flag * i * stride;
+                list<Wafer> possible_optimals;
+
+                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
+                cout << error.access_positive << " " << possible_optimals.size() << endl;
+
+            }
+
+            break;
+
+        }
+
+        case TRAFF_ERR : {
+
+            for(int i = 0; i < iters; i++){
+
+                error.traffic_positive = i * stride;
+                error.traffic_negative = -negative_flag * i * stride;
+                list<Wafer> possible_optimals;
+
+                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
+                cout << error.traffic_positive << " " << possible_optimals.size() << endl;
+
+            }
+
+            break;
+
+        }
+
+        default : {
+
+            cout << "Nothing match the type of error (1, 2, 3 or 4)!" << endl;
+            break;
+
+        }
 
     }
-
-    // for(int i = 0; i < 20; i++){
-
-    //     error.TFLOPs_positive = i * 0.01;
-    //     error.TFLOPs_negative = -i * 0.01;
-
-    //         for (int j = 0; j < 20; j++){
-
-    //             list<Wafer> possible_optimals;
-    //             error.paramsize_positive = j * 0.01;
-    //             error.paramsize_negative = -j * 0.01;
-    //             // cout << i << " " << j << " " << endl;
-
-    //             Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
-    //             cout << error.TFLOPs_positive << " " << error.paramsize_positive << " " << possible_optimals.size() << endl;
-
-    //         }
-        
-    // }
 
     return 0;
 }

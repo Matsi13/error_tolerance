@@ -35,14 +35,8 @@ Permutation.cpp
 )
 
 add_library(distance_lib 
-Memory.cpp
-Compute.cpp
-Communication.cpp
-Die.cpp
 Wafer.cpp
 Distance.cpp
-Generate.cpp
-Permutation.cpp
 )
 
 add_library(scan_lib 

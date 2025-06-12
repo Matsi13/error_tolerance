@@ -27,7 +27,7 @@ TFLOPS per area :
 SRAM capacity per area :
 0.025
 compute chip length :
-12 1 17
+10 1 15
 compute chip width :
 10 1 15
 compute chip padding :
