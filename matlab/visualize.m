@@ -1,6 +1,6 @@
 close all; clear; clc
-load ../out/output/0006_wafer.txt
-Generate_output = X0006_wafer;
+load ../out/output/0045_wafer.txt
+Generate_output = X0045_wafer;
 TFLOPS = Generate_output(:, 1);
 SRAM_capacity = Generate_output(:, 2);
 DRAM_capacity = Generate_output(:, 3);

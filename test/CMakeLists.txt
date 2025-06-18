@@ -46,4 +46,8 @@ add_executable(Analysis_test Analysis_test.cpp)
 target_link_libraries(Analysis_test analysis_lib wafer_lib permutation_lib workload_lib generate_lib)
 add_test(NAME Analysis_test COMMAND Analysis_test)
 
+add_executable(Optimal_test Optimal_test.cpp)
+target_link_libraries(Optimal_test optimal_lib permutation_lib generate_lib distance_lib)
+add_test(NAME Optimal_test COMMAND Optimal_test)
+
 

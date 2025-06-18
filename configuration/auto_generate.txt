@@ -1,7 +1,7 @@
 wafer length :
-120
+200
 wafer width :
-120
+200
 die padding :
 0.5
 bandwidth_per_area:
@@ -27,9 +27,9 @@ TFLOPS per area :
 SRAM capacity per area :
 0.025
 compute chip length :
-10 1 15
+32 1 33
 compute chip width :
-10 1 15
+24 1 25
 compute chip padding :
 0.1
 available memory types :
@@ -39,9 +39,9 @@ DRAM capacity per area :
 bandwidth per length :
 2
 memory length :
-5 1 8
+8 1 9
 memory width :
-5 1 8
+8 1 9
 memory padding :
 0.1
 available communication types :
@@ -51,7 +51,7 @@ bandwidth per length :
 communication length :
 1 1 2
 communication width :
-2 0 2
+2 1 3
 communication padding :
 0.1
 

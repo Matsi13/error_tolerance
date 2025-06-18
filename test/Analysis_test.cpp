@@ -74,7 +74,7 @@ int main(){
     error.traffic_positive = 0;
     error.traffic_negative = 0;
 
-    Workload transformer_workload(4e8, 2e9, 2e10, 2e-5);
+    Workload transformer_workload(4e8, 2e9, 2e10, 2e12);
     float off_wafer_bandwidth = 100;
 
     switch (catagory) {

@@ -79,3 +79,13 @@ Recompute.cpp
 Workload.cpp
 )
 
+add_library(optimal_lib 
+Optimal.cpp
+Memory.cpp
+Compute.cpp
+Communication.cpp
+Die.cpp
+Wafer.cpp
+
+)
+
