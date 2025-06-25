@@ -16,6 +16,9 @@ class Attention : public Workload{
         virtual const float get_paramsize()const;
         virtual const float get_access()const;
         virtual const float get_traffic()const;
+ 
+        const float get_kvcache_size()const;
+        const float get_model_size()const;
 
         const int get_d_model()const;
         const int get_head_num()const;
@@ -53,6 +56,9 @@ class Attention : public Workload{
         int norm_function;
         int act_function;
         int mode;
+
+        float kvcache_size;
+        float model_size;
 
         void update();
         void update_TFLOPs();

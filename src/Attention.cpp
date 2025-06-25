@@ -174,6 +174,20 @@ const int Attention::get_mode()const{
 }
 
 
+const float Attention::get_kvcache_size()const{
+    
+    return kvcache_size;
+
+}
+
+
+const float Attention::get_model_size()const{
+
+    return model_size;
+    
+}
+
+
 void Attention::set_d_model(int d_model){
 
     this->d_model = d_model;
@@ -280,7 +294,7 @@ float Attention::cal_norm_TFLOPs(){
 
 void Attention::update_TFLOPs(){
 
-    float norm_prefill_TFLOPs = prompt_avg * cal_norm_TFLOPs();
+    float norm_1_prefill_TFLOPs = prompt_avg * cal_norm_TFLOPs();
     float linear_0_prefill_TFLOPs = prompt_avg * d_model * d_model * 2 * 1e-12;
     float q_prefill_TFLOPs = prompt_avg * d_model * d_q * head_num * 2 * 1e-12;
     float k_prefill_TFLOPs = prompt_avg * d_model * d_k * head_num * 2 * 1e-12;
@@ -289,10 +303,16 @@ void Attention::update_TFLOPs(){
     float attention_score_prefill_TFLOPs = prompt_avg * d_k * prompt_avg * head_num * 2 * 1e-12;
     float softmax_prefill_TFLOPs = prompt_avg * prompt_avg * head_num * 3 * 1e-12;
     float dot_product_prefill_TFLOPs = prompt_avg * prompt_avg * d_v * head_num * 1e-12;
-    float linear_1_prefill_TFLOPs = prompt_avg * d_v * head_num * d_hidden * 2 * 1e-12;
-    float add_residul_prefill_TFLOPs = prompt_avg * head_num * d_hidden * 1e-12;
+    float linear_1_prefill_TFLOPs = prompt_avg * d_v * head_num * d_model * 2 * 1e-12;
+    float add_residul_1_prefill_TFLOPs = prompt_avg * head_num * d_hidden * 1e-12; 
+    float norm_2_prefill_TFLOPs = prompt_avg * cal_norm_TFLOPs();
+    float linear_2_prefill_TFLOPs = prompt_avg * d_model * d_hidden * 2 * 1e-12;
+    float linear_3_prefill_TFLOPs = prompt_avg * d_model * d_hidden * 2 * 1e-12;
+    float silu_prefill_TFLOPs = prompt_avg * d_hidden * 4 * 1e-12;
+    float add_residul_2_prefill_TFLOPs = prompt_avg * d_hidden * 1e-12;
+    float linear_4_prefill_TFLOPs = prompt_avg * d_model * d_hidden * 2 * 1e-12;
 
-    float prefill_TFLOPs = norm_prefill_TFLOPs + linear_0_prefill_TFLOPs + q_prefill_TFLOPs + k_prefill_TFLOPs + v_prefill_TFLOPs + RoPE_prefill_TFLOPs + attention_score_prefill_TFLOPs + dot_product_prefill_TFLOPs + linear_1_prefill_TFLOPs + add_residul_prefill_TFLOPs;
+    float prefill_TFLOPs = norm_1_prefill_TFLOPs + linear_0_prefill_TFLOPs + q_prefill_TFLOPs + k_prefill_TFLOPs + v_prefill_TFLOPs + RoPE_prefill_TFLOPs + attention_score_prefill_TFLOPs + dot_product_prefill_TFLOPs + linear_1_prefill_TFLOPs + add_residul_1_prefill_TFLOPs + norm_2_prefill_TFLOPs + linear_2_prefill_TFLOPs + linear_3_prefill_TFLOPs + silu_prefill_TFLOPs + add_residul_2_prefill_TFLOPs + linear_4_prefill_TFLOPs;
 
     float norm_decode_TFLOPs = output_avg * cal_norm_TFLOPs();
     float linear_0_decode_TFLOPs = output_avg * d_model * d_model * 2 * 1e-12;
@@ -303,9 +323,17 @@ void Attention::update_TFLOPs(){
     float attention_score_decode_TFLOPs = d_k * head_num * (2 * prompt_avg + output_avg + 1) * output_avg * 1e-12; 
     float softmax_decode_TFLOPs = 3 * (2 * prompt_avg + 1 + output_avg) * output_avg;
     float dot_product_decode_TFLOPs = d_v * head_num * (2 * prompt_avg + 1 + output_avg) * output_avg * 1e-12;
-    float linear_decode_TFLOPs = head_num * d_v * d_hidden  * (2 * prompt_avg + 1 + output_avg) * output_avg * 1e-12;
+    float linear_1_decode_TFLOPs = head_num * d_v * d_hidden  * (2 * prompt_avg + 1 + output_avg) * output_avg * 1e-12;
 
-    float decode_TFLOPs = norm_decode_TFLOPs + linear_0_decode_TFLOPs + q_decode_TFLOPs + k_decode_TFLOPs + v_decode_TFLOPs + RoPE_decode_TFLOPs + attention_score_decode_TFLOPs + softmax_decode_TFLOPs + dot_product_decode_TFLOPs + linear_decode_TFLOPs;
+    float add_residul_1_decode_TFLOPs = output_avg * head_num * d_hidden * 1e-12; 
+    float norm_2_decode_TFLOPs = output_avg * cal_norm_TFLOPs();
+    float linear_2_decode_TFLOPs = output_avg * d_model * d_hidden * 2 * 1e-12;
+    float linear_3_decode_TFLOPs = output_avg * d_model * d_hidden * 2 * 1e-12;
+    float silu_decode_TFLOPs = output_avg * d_hidden * 4 * 1e-12;
+    float add_residul_2_decode_TFLOPs = output_avg * d_hidden * 1e-12;
+    float linear_4_decode_TFLOPs = output_avg * d_model * d_hidden * 2 * 1e-12;
+
+    float decode_TFLOPs = norm_decode_TFLOPs + linear_0_decode_TFLOPs + q_decode_TFLOPs + k_decode_TFLOPs + v_decode_TFLOPs + RoPE_decode_TFLOPs + attention_score_decode_TFLOPs + softmax_decode_TFLOPs + dot_product_decode_TFLOPs + linear_1_decode_TFLOPs + add_residul_1_decode_TFLOPs + norm_2_decode_TFLOPs + linear_2_decode_TFLOPs + linear_3_decode_TFLOPs + silu_decode_TFLOPs + add_residul_2_decode_TFLOPs + linear_4_decode_TFLOPs;
 
     float total_TFLOPs = 0;
 
@@ -313,13 +341,13 @@ void Attention::update_TFLOPs(){
 
         case INFERENCE : {
 
-            total_TFLOPs = prefill_TFLOPs + decode_TFLOPs;
+            total_TFLOPs = (prefill_TFLOPs + decode_TFLOPs) / (prompt_avg + output_avg); // 将计算量平均到每个token上，得出每个时间步平均的计算量
             break;
 
         }
         case TRAINING : {
 
-            total_TFLOPs = 3 * (prefill_TFLOPs + decode_TFLOPs);
+            total_TFLOPs = 3 * (prefill_TFLOPs + decode_TFLOPs) / (prompt_avg + output_avg);
             break;
 
         }
@@ -334,8 +362,10 @@ void Attention::update_TFLOPs(){
 
 void Attention::update_paramsize(){
 
-    float KV_cache_paramsize = (d_k + d_v) * head_num * (prompt_avg + 2 * output_avg) * (output_avg + 1) / 2 *  sizeof(float) * 1e-9;
-    Workload::set_paramsize(KV_cache_paramsize);
+    
+    this -> kvcache_size =  (d_k + d_v) * head_num * (prompt_avg + output_avg) * (2 * (prompt_avg + output_avg) + 1) / 6 *  sizeof(float) * 1e-9;
+    this -> model_size = d_model * d_model * sizeof(float) * 1e-9 + head_num * d_model * d_k * sizeof(float) * 1e-9 + head_num * d_model * d_q *  sizeof(float) * 1e-9 + head_num * d_model * d_v * sizeof(float) * 1e-9 + d_model * d_model * sizeof(float) * 1e-9 + 2 * d_model * d_hidden * sizeof(float) * 1e-9 + d_model * d_model * sizeof(float) * 1e-9;
+    Workload::set_paramsize(kvcache_size + model_size);
     return;
 
 }

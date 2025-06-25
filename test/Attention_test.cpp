@@ -14,9 +14,9 @@ int main(){
     int d_q = 64;
     int d_k = 64;
     int d_v = 64;
-    int d_hidden = 1024;
-    int prompt_avg = 1024;
-    int output_avg = 10240;
+    int d_hidden = 2048;
+    int prompt_avg = 64;
+    int output_avg = 5818;
     int norm_function = RMSNORM;
     int act_function = RELU;
     int mode = INFERENCE;
@@ -26,12 +26,8 @@ int main(){
     cout << layer.get_paramsize() << endl;
     cout << layer.get_access() << endl;
     cout << layer.get_traffic() << endl;
-
-    // Attention layer1(layer);
-    // cout << layer1.get_TFLOPs() << endl;
-    
-    // Attention layer2 = layer;
-    // cout << layer2.get_TFLOPs() << endl;
+    cout << layer.get_kvcache_size() << endl;
+    cout << layer.get_model_size() << endl;
 
     return 0;
 
