@@ -86,6 +86,11 @@ Compute.cpp
 Communication.cpp
 Die.cpp
 Wafer.cpp
+)
 
+add_library(astra_API_lib 
+Astra_API.cpp
+Die.cpp
+Wafer.cpp
 )
 

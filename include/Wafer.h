@@ -19,6 +19,8 @@ class Wafer{
         const float get_DRAM_capacity()const;
         const float get_memory_bandwidth()const;
         const float get_communication_bandwidth()const;
+        const int get_rows()const;
+        const int get_columns()const;
         const Die get_die()const;
 
         void set_die(Die& newdie); // change the die in the wafer and update 

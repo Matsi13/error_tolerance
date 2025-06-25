@@ -1,5 +1,5 @@
 #include <iostream>
-#include <ifstream>
+#include <fstream>
 #include <list>
 #include <cmath>
 #include <string>
@@ -30,14 +30,14 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         float TFLOPs_per_die = TFLOPs / columns;
 
         float die_TFLOPS = die.get_TFLOPS();
-        float forward_compute_time = TFLOPs_per_die / die_TFLOPs;
+        float forward_compute_time = TFLOPs_per_die / die_TFLOPS;
         
         float die_SRAM_size = die.get_SRAM_capacity();
         float forward_die_DRAM_size = die.get_DRAM_capacity();
-        float die_DRAM_bandwidth = die.get_DRAM_bandwidth();
+        float die_DRAM_bandwidth = die.get_memory_bandwidth();
         float forward_DRAM_access_size = 0, forward_off_chip_access_size = 0;
 
-        if(die_SRAM_size < model_size_per_die）{
+        if(die_SRAM_size < model_size_per_die){
             forward_DRAM_access_size += model_size_per_die - die_SRAM_size;
             forward_die_DRAM_size -= model_size_per_die - die_SRAM_size;
         }
@@ -62,7 +62,7 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         float input_gradient_time = forward_compute_time; // no kv_cache in backward process. backward process is like prefill
         float weight_gradient_time = forward_compute_time;
         float weight_communication_size = model_size_per_die * (rows - 1);
-
+    }
         
 
         

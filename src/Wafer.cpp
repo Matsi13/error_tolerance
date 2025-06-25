@@ -101,6 +101,21 @@ const Die Wafer::get_die()const{
 
 }
 
+
+const int Wafer::get_rows()const{
+
+    return rows;
+
+}
+
+
+const int Wafer::get_columns()const{
+
+    return columns;
+
+}
+
+
 void Wafer::set_die(Die& newdie){
 
     this->die = newdie;
