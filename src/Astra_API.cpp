@@ -9,14 +9,22 @@
 
 using namespace std;
 
+int time2cycle(float time, float freq){
+
+    int cycle = ceil(time * freq);
+    return cycle;
+    
+}
+
 void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_size, float kv_cache_size, float traffic, list<Wafer> solutions, string path_workload, string path_arch, string path_system, string path_network, string path_logical_network, string path_physical_network, string config){
 
+    int wafer_idx = 0;
     for (auto it = solutions.begin(); it != solutions.end(); it++){
         Wafer solution = *it;
         Die die = solution.get_die();
         int columns = solution.get_columns();
         int rows = solution.get_rows();
-        float model_size_per_die = model_size / columns;
+        float model_size_per_die = 2 * model_size / columns; // consider 1F1B schedule, store weight gradient also
         float kv_cache_size_per_die = kv_cache_size / columns;
         int model_parallel_num = rows;
         float TFLOPs_per_die = TFLOPs / columns;
@@ -50,6 +58,14 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         float forward_access_time = max(forward_DRAM_access_time, forward_off_chip_access_time);
 
         float forward_time = max(forward_compute_time, forward_access_time);
+        float forward_communication_size = traffic;
+        float input_gradient_time = forward_compute_time; // no kv_cache in backward process. backward process is like prefill
+        float weight_gradient_time = forward_compute_time;
+        float weight_communication_size = model_size_per_die * (rows - 1);
+
+        
+
+        
         
 
 
