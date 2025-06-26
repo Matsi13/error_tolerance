@@ -45,7 +45,7 @@ def generate_network_json(config: str, input_path: str, output_path: str):
                 "intra-dimension-scheduling": "FIFO",
                 "inter-dimension-scheduling": "baseline",
                 "endpoint-delay": 10,
-                "active-chunks-per-dimnesion": 1,
+                "active-chunks-per-dimension": 1,
                 "preferred-dataset-splits": 1,
                 "all-reduce-implementation": ["ring", "ring"],
                 "all-gather-implementation": ["ring", "ring"],
