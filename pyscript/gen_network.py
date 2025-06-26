@@ -28,3 +28,10 @@ def generate_network_yml(config: str, input_path: str, output_path: str):
             yml_path = os.path.join(output_path, yml_filename)
             with open(yml_path, 'w') as yml_file:
                 yml_file.write(yml_content) 
+
+if __name__ == '__main__':
+
+    input_path = "/data/login_home/lijinxi/error_tolerance/output/wafer"
+    config = "0060"
+    output_path = "/data/login_home/lijinxi/error_tolerance/output/network"
+    generate_network_yml(config=config, input_path=input_path, output_path=output_path)

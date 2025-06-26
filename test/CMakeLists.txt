@@ -50,4 +50,9 @@ add_executable(Optimal_test Optimal_test.cpp)
 target_link_libraries(Optimal_test optimal_lib permutation_lib generate_lib distance_lib)
 add_test(NAME Optimal_test COMMAND Optimal_test)
 
+add_executable(Astra_API_test Astra_API_test.cpp)
+target_link_libraries(Astra_API_test astra_API_lib permutation_lib generate_lib wafer_lib)
+add_test(NAME Astra_API_test COMMAND Astra_API_test)
+
+
 

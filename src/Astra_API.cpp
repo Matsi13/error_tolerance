@@ -18,7 +18,7 @@ int time2cycle(float time, float freq){
     
 }
 
-void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_size, float kv_cache_size, float traffic, list<Wafer> solutions, string path_workload,  string path_logical_network, string path_physical_network, string config){
+void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_size, float kv_cache_size, float traffic, list<Wafer> solutions, string path_workload, string path_physical_network, string config){
 
     int wafer_idx = 0;
     for (auto it = solutions.begin(); it != solutions.end(); it++){
@@ -37,6 +37,7 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         float die_SRAM_size = die.get_SRAM_capacity();
         float forward_die_DRAM_size = die.get_DRAM_capacity();
         float die_DRAM_bandwidth = die.get_memory_bandwidth();
+        float die_communication_bandwidth = die.get_communication_bandwidth();
         float forward_DRAM_access_size = 0, forward_off_chip_access_size = 0;
 
         if(die_SRAM_size < model_size_per_die){
@@ -60,7 +61,7 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         float forward_access_time = max(forward_DRAM_access_time, forward_off_chip_access_time);
 
 
-        int forward_cycle = time2cycle(max(forward_compute_time, forward_access_time));
+        int forward_cycle = time2cycle(max(forward_compute_time, forward_access_time), freq);
         int forward_communication_size = int(traffic);
         int input_gradient_cycle = forward_cycle; // no kv_cache in backward process. backward process is like prefill
         int weight_gradient_cycle = forward_cycle;
@@ -91,7 +92,7 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
                         << "ALLREDUCE "
                         << forward_communication_size << " "
                         << input_gradient_cycle << " "
-                        << "ALLREDUCE "
+                        << "NONE "
                         << "0 "
                         << weight_gradient_cycle << " "
                         << "ALLREDUCE "
@@ -103,14 +104,67 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         } else {
             cerr << "Error: Unable to create file " << filepath << endl;
         }
+
+        stringstream ns3;
+        ns3 << config << "_" << setw(6) << setfill('0') << wafer_idx << "_physical_network.txt";
+        string filename_ns3 = ns3.str();
+        
+        // Create full file path
+        string filepath_ns3 = path_physical_network + "/" + filename_ns3;
+        
+        // Create and write content to txt file
+        ofstream outfile_ns3(filepath_ns3);
+        int num_nodes = rows * columns;
+        int num_links = 2 * rows * columns - rows - columns;
+        float die_one_direction_bandwidth = die_communication_bandwidth / 4 * 8; // Gbps
+        if (outfile_ns3.is_open()) {
+            // First line: DATA
+            outfile_ns3 << num_nodes << " "
+                        << 0 << " " 
+                        << num_links << " "
+                        << endl << endl;
+           
+            // Write links
+            for (int i = 0; i < rows; i++) {
+
+                for (int j = 0; j < rows; j++){
+
+                    if (i < rows - 1){
+
+                        int start = i * rows + j;
+                        int end = i * (rows + 1) + j;
+
+                        outfile_ns3 << start << " "
+                                    << end << " "
+                                    << die_one_direction_bandwidth << "Gbps " 
+                                    << 0.001 << "ms " 
+                                    << 0 << endl;
+
+                    }
+
+                    if (j < columns - 1){
+
+                        int start = i * rows + j;
+                        int end = i * rows + j + 1;
+
+                        outfile_ns3 << start << " "
+                                    << end << " "
+                                    << die_one_direction_bandwidth << "Gbps " 
+                                    << 0.001 << "ms " 
+                                    << 0 << endl;
+
+                    }
+
+                }
+                
+            }
+            
+            outfile_ns3.close();
+        } else {
+            cerr << "Error: Unable to create file " << filepath << endl;
+        }
         
         wafer_idx++;
     }
-        
-
-        
-        
-
-
   
 }

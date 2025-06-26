@@ -45,8 +45,16 @@ Wafer& Wafer::operator = (const Wafer &obj){
 
 void Wafer::print(){
 
-    cout << TFLOPS<< " " << SRAM_capacity  << " " << DRAM_capacity << " " << memory_bandwidth << " " << communication_bandwidth << " ";
-    cout << rows << " " << columns << " " << sizes[0] << " " << sizes[1] << " ";
+    cout << TFLOPS<< " " 
+         << SRAM_capacity  << " " 
+         << DRAM_capacity << " " 
+         << memory_bandwidth << " " 
+         << communication_bandwidth << " " 
+         << rows << " " 
+         << columns << " " 
+         << sizes[0] << " " 
+         << sizes[1] << " ";
+         
     this->die.print();
     cout << endl;
     return;

@@ -58,3 +58,10 @@ def generate_network_json(config: str, input_path: str, output_path: str):
             json_path = os.path.join(output_path, json_filename)
             with open(json_path, 'w') as json_file:
                 json.dump(json_data, json_file, indent=2) 
+
+if __name__ == '__main__':
+
+    input_path = "/data/login_home/lijinxi/error_tolerance/output/wafer"
+    config = "0060"
+    output_path = "/data/login_home/lijinxi/error_tolerance/output/system"
+    generate_network_json(config=config, input_path=input_path, output_path=output_path)
