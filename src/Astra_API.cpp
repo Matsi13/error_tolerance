@@ -18,7 +18,7 @@ int time2cycle(float time, float freq){
     
 }
 
-void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_size, float kv_cache_size, float traffic, list<Wafer> solutions, string path_workload, string path_arch, string path_system, string path_network, string path_logical_network, string path_physical_network, string config){
+void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_size, float kv_cache_size, float traffic, list<Wafer> solutions, string path_workload,  string path_logical_network, string path_physical_network, string config){
 
     int wafer_idx = 0;
     for (auto it = solutions.begin(); it != solutions.end(); it++){
