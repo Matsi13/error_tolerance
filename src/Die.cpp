@@ -690,6 +690,7 @@ void Die::print(){
     cout << Communication_unit.get_size(0) << " " << Communication_unit.get_size(1) << " " << Communication_unit.get_bandwidth() << " " << Communication_unit.get_padding() << " ";
     cout << up  << 9 << " " << down << 9 << " " << left << 9 << " " << right << 9 << " ";
     cout << padding << " " << bandwidth_per_area << " " << memory_bandwidth_ratio << " ";
+    cout << memory_bandwidth << " " << communication_bandwidth << " ";
 
     return;
     
