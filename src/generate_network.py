@@ -17,7 +17,7 @@ def generate_network_yml(config: str, input_path: str, output_path: str):
             rows = int(parts[5])
             columns = int(parts[6])
             mem_bandwidth = float(parts[30])
-            communication_bandwidth = float(parts[31])
+            communication_bandwidth = float(parts[31]) / 4
             yml_content = (
                 "topology: [Ring, Ring]\n"
                 f"npus_count: [{columns}, {rows}]\n"
