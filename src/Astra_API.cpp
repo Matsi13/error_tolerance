@@ -3,6 +3,8 @@
 #include <list>
 #include <cmath>
 #include <string>
+#include <iomanip>
+#include <sstream>
 
 #include "Wafer.h"
 #include "Die.h"
@@ -60,14 +62,49 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
 
         int forward_cycle = time2cycle(max(forward_compute_time, forward_access_time));
         int forward_communication_size = int(traffic);
-        int input_gradient_cycle = forward_compute_cycle; // no kv_cache in backward process. backward process is like prefill
-        int weight_gradient_cycle = forward_compute_cycle;
+        int input_gradient_cycle = forward_cycle; // no kv_cache in backward process. backward process is like prefill
+        int weight_gradient_cycle = forward_cycle;
         int weight_communication_size = ceil(model_size_per_die * (rows - 1));
 
-
+        // Create filename with 6-digit wafer_idx
+        stringstream ss;
+        ss << config << "_" << setw(6) << setfill('0') << wafer_idx << "_workload.txt";
+        string filename = ss.str();
         
+        // Create full file path
+        string filepath = path_workload + "/" + filename;
         
+        // Create and write content to txt file
+        ofstream outfile(filepath);
+        if (outfile.is_open()) {
+            // First line: DATA
+            outfile << "DATA" << endl;
+            
+            // Second line: columns value
+            outfile << columns << endl;
+            
+            // Write columns rows
+            for (int i = 0; i < columns; i++) {
+                outfile << "layer_" << i << " "
+                        << "-1 "
+                        << forward_cycle << " "
+                        << "ALLREDUCE "
+                        << forward_communication_size << " "
+                        << input_gradient_cycle << " "
+                        << "ALLREDUCE "
+                        << "0 "
+                        << weight_gradient_cycle << " "
+                        << "ALLREDUCE "
+                        << weight_communication_size << " "
+                        << "10" << endl;
+            }
+            
+            outfile.close();
+        } else {
+            cerr << "Error: Unable to create file " << filepath << endl;
+        }
         
+        wafer_idx++;
     }
         
 
@@ -77,4 +114,3 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
 
   
 }
-
