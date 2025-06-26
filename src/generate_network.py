@@ -22,7 +22,7 @@ def generate_network_yml(config: str, input_path: str, output_path: str):
                 "topology: [Ring, Ring]\n"
                 f"npus_count: [{columns}, {rows}]\n"
                 f"bandwidth: [{communication_bandwidth}, {communication_bandwidth}]\n"
-                "latency: [50.0, 50.0]\n"
+                "latency: [10.0, 10.0]\n"
             )
             yml_filename = f"{config}_{idx:06d}_network.yml"
             yml_path = os.path.join(output_path, yml_filename)
