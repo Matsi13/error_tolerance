@@ -61,11 +61,11 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         float forward_access_time = max(forward_DRAM_access_time, forward_off_chip_access_time);
 
 
-        int forward_cycle = time2cycle(max(forward_compute_time, forward_access_time), freq);
-        int forward_communication_size = int(traffic);
+        int forward_cycle = time2cycle(max(forward_compute_time, forward_access_time) / columns, freq);
+        int forward_communication_size = int(traffic / columns);
         int input_gradient_cycle = forward_cycle; // no kv_cache in backward process. backward process is like prefill
         int weight_gradient_cycle = forward_cycle;
-        int weight_communication_size = ceil(model_size_per_die * (rows - 1));
+        int weight_communication_size = ceil(model_size_per_die * (rows - 1) / columns);
 
         // Create filename with 6-digit wafer_idx
         stringstream ss;
