@@ -6,6 +6,10 @@ wafer_num=17
 
 echo "Using config: $config, wafer_num: $wafer_num"
 
+# Activate conda environment and change directory
+echo "Activating astra-env conda environment..."
+conda activate astra-env
+
 echo "Changing to chakra directory..."
 cd /data/login_home/lijinxi/astra-sim/extern/graph_frontend/chakra/
 
@@ -55,8 +59,8 @@ output_dir="/data/login_home/lijinxi/error_tolerance/output/workload_et"
 mkdir -p "$output_dir"
 
 # Run chakra_converter for each wafer
-for ((idx=0; idx<=wafer_num-1; idx++)); do
-    die_num=${die_array[$((idx-1))]}
+for ((idx=0; idx<wafer_num; idx++)); do
+    die_num=${die_array[$idx]}
     printf "Processing wafer %06d with die_num=%d\n" $idx $die_num
     
     input_file="/data/login_home/lijinxi/error_tolerance/output/workload/${config}_$(printf "%06d" $idx)_workload.txt"

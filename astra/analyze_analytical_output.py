@@ -15,8 +15,8 @@ def analyze_analytical_output(output_file_path, config, wafer_num, error_rate):
     cycle_counts = {}  # 存储每个文件的max_cycle_count
     
     # 遍历所有输出文件
-    for idx in range(1, wafer_num + 1):
-        filename = f"{output_file_path}_{config}_{idx}_analytical_output.txt"
+    for idx in range(0, wafer_num):
+        filename = f"{output_file_path}{config}_{idx:06d}_analytical_output.txt"
         
         if not os.path.exists(filename):
             print(f"Warning: File {filename} not found, skipping...")
@@ -67,13 +67,13 @@ def analyze_analytical_output(output_file_path, config, wafer_num, error_rate):
     print("Indices:", sorted(possible_optimal_indices))
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 5:
         print("Usage: python analyze_analytical_output.py <output_file_path> <config> <wafer_num> <error_rate>")
         sys.exit(1)
     
     output_file_path = sys.argv[1]
     config = sys.argv[2]
     wafer_num = int(sys.argv[3])
-    error_rate = 0.05
+    error_rate = float(sys.argv[4])
     
     analyze_analytical_output(output_file_path, config, wafer_num, error_rate) 

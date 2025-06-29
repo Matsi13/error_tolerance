@@ -115,7 +115,7 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         // Create and write content to txt file
         ofstream outfile_ns3(filepath_ns3);
         int num_nodes = rows * columns;
-        int num_links = 2 * rows * columns - rows - columns;
+        int num_links = 2 * rows * columns;
         float die_one_direction_bandwidth = die_communication_bandwidth / 4 * 8; // Gbps
         if (outfile_ns3.is_open()) {
             // First line: DATA
@@ -125,46 +125,72 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
                         << endl << endl;
            
             // Write links
+            // for (int i = 0; i < rows; i++) {
+
+            //     for (int j = 0; j < columns; j++){
+
+            //         if (i < rows - 1){
+
+            //             int start = i * columns + j;
+            //             int end = (i + 1) * columns + j;
+
+            //             outfile_ns3 << start << " "
+            //                         << end << " "
+            //                         << die_one_direction_bandwidth << "Gbps " 
+            //                         << 0.001 << "ms " 
+            //                         << 0 << endl;
+
+            //         }
+
+            //         if (j < columns - 1){
+
+            //             int start = i * columns + j;
+            //             int end = i * columns + j + 1;
+
+            //             outfile_ns3 << start << " "
+            //                         << end << " "
+            //                         << die_one_direction_bandwidth << "Gbps " 
+            //                         << 0.001 << "ms " 
+            //                         << 0 << endl;
+
+            //         }
+
+            //     }
+                
+            // }
+
             for (int i = 0; i < rows; i++) {
 
-                for (int j = 0; j < rows; j++){
+                for (int j = 0; j < columns; j++){
 
-                    if (i < rows - 1){
+                    int start = i * columns + j;
+                    int end1 = ((i + 1)%rows) * columns + j;
 
-                        int start = i * rows + j;
-                        int end = i * (rows + 1) + j;
+                    outfile_ns3 << start << " "
+                                << end1 << " "
+                                << die_one_direction_bandwidth << "Gbps " 
+                                << 0.001 << "ms " 
+                                << 0 << endl;
+    
+                    int end2 = i * columns + ((j + 1)%columns);
 
-                        outfile_ns3 << start << " "
-                                    << end << " "
-                                    << die_one_direction_bandwidth << "Gbps " 
-                                    << 0.001 << "ms " 
-                                    << 0 << endl;
-
-                    }
-
-                    if (j < columns - 1){
-
-                        int start = i * rows + j;
-                        int end = i * rows + j + 1;
-
-                        outfile_ns3 << start << " "
-                                    << end << " "
-                                    << die_one_direction_bandwidth << "Gbps " 
-                                    << 0.001 << "ms " 
-                                    << 0 << endl;
-
-                    }
+                    outfile_ns3 << start << " "
+                                << end2 << " "
+                                << die_one_direction_bandwidth << "Gbps " 
+                                << 0.001 << "ms " 
+                                << 0 << endl;
 
                 }
-                
+
             }
+               outfile_ns3.close(); 
+            }
+    
             
-            outfile_ns3.close();
-        } else {
+         else {
             cerr << "Error: Unable to create file " << filepath << endl;
         }
         
         wafer_idx++;
-    }
-  
+}
 }

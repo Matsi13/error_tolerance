@@ -15,7 +15,7 @@ def analyze_ns3_output(output_file_path, config, idx_list):
     
     # 遍历所有输出文件
     for idx in idx_list:
-        filename = f"{output_file_path}_{config}_{idx}_ns3_output.txt"
+        filename = f"{output_file_path}{config}_{idx:06d}_ns3_output.txt"
         
         if not os.path.exists(filename):
             print(f"Warning: File {filename} not found, skipping...")
