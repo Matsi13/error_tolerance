@@ -20,7 +20,7 @@ def generate_logical_network_json(config: str, input_path: str, output_path: str
             json_data = {
                 "logical-dims": [rows, columns]
             }
-            json_filename = f"{config}_{idx:06d}_logical.json"
+            json_filename = f"{config}_{idx-1:06d}_logical_network.json"
             json_path = os.path.join(output_path, json_filename)
             with open(json_path, 'w') as json_file:
                 json.dump(json_data, json_file, indent=2) 
