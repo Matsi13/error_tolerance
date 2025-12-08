@@ -27,9 +27,9 @@ TFLOPS per area :
 SRAM capacity per area :
 0.025
 compute chip length :
-32 1 33
+12 1 15
 compute chip width :
-24 1 25
+10 1 13
 compute chip padding :
 0.1
 available memory types :
@@ -39,9 +39,9 @@ DRAM capacity per area :
 bandwidth per length :
 2
 memory length :
-8 1 9
+5 1 8
 memory width :
-8 1 9
+5 1 7
 memory padding :
 0.1
 available communication types :

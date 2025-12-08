@@ -4,6 +4,7 @@
 #include <string>
 #include <queue>
 #include <list>
+#include <stack>
 
 #include "Macro.h"
 #include "Memory.h"
@@ -29,6 +30,8 @@ bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_widt
 
 // compare two wafers
 bool is_better_wafer(Wafer& first, Wafer& second);
+
+void Prune(stack<Wafer>& all_solutions, list<Wafer>& result);
 
 // find the optimal wafers that meets the threshold
 void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, float bandwidth_per_area, float memory_bandwidth_ratio, list<Wafer>& result, float relaxation, float wafer_length, float wafer_width, Threshold threshold);

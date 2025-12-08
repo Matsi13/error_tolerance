@@ -351,6 +351,15 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
     }
 
     // cout << all_solutions.size() << endl;
+    Prune(all_solutions, result);
+
+
+    return;
+}
+
+
+void Prune(stack<Wafer>& all_solutions, list<Wafer>& result){
+
 
     // put the first solution into List result
     result.push_back(all_solutions.top());
@@ -379,7 +388,7 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
             
         }
 
-        if(is_better){ // if is_better == true, the new solution should be added to permutation_side, and some existing solutions should be removed
+        if(is_better){ // if is_better == true, the new solution should be added to the list of results, and some existing solutions should be removed
 
             typename list<Wafer>::iterator idx;
 
@@ -413,4 +422,5 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
     }
 
     return;
+
 }

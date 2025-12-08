@@ -3,7 +3,7 @@
 # 可修改变量
 workload_filepath="/home/matsi/workspace/astra-sim/configs/0060/workload_et/"
 system_filepath="/home/matsi/workspace/astra-sim/configs/0060/system/"
-network_filepath="/home/matsi/workspace/astra-sim/configs/0060/network/"
+network_filepath="/home/matsi/workspace/astra-sim/configs/0060/config/"
 remote_path="/home/matsi/workspace/astra-sim/configs/0060/remote_memory.json"
 logical_filepath="/home/matsi/workspace/astra-sim/configs/0060/logical_network/"
 config="0060"  # 你可以修改为需要的配置名
