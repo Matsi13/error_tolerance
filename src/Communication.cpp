@@ -36,7 +36,7 @@ Communication& Communication::operator = (const Communication &obj){
 
 
 const float Communication::get_size(int index)const{
-
+    if (index != 0 && index != 1) return 0.0f;
     return sizes[index];
 
 }

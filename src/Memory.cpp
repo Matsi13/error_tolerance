@@ -43,7 +43,7 @@ Memory& Memory::operator = (const Memory &obj){
 
 
 const float Memory::get_size(int index)const{
-
+    if (index != 0 && index != 1) return 0.0f;
     return sizes[index];
 
 }

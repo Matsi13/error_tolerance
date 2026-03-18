@@ -81,7 +81,7 @@ Die::~Die(){
 
 
 const float Die::get_size(int index)const{
-    
+    if (index != 0 && index != 1) return 0.0f;
     return sizes[index];
 
 }
@@ -591,7 +591,7 @@ void Die::update_bandwidth(){
     if (total_bandwidth < memory_bandwidth + communication_bandwidth){
 
         memory_bandwidth = min(memory_bandwidth, total_bandwidth * memory_bandwidth_ratio);
-        communication_bandwidth = min(communication_bandwidth, total_bandwidth * memory_bandwidth_ratio);
+        communication_bandwidth = min(communication_bandwidth, total_bandwidth * (1 - memory_bandwidth_ratio));
 
     }
 
@@ -603,13 +603,63 @@ void Die::update_bandwidth(){
 }
 
 
+bool Die::check_reticle_limit(){
+    
+    float current_length = get_size(0);
+    float current_width = get_size(1);
+    
+    // Check if die exceeds reticle limit
+    if (current_length > MAX_DIE_LENGTH || current_width > MAX_DIE_WIDTH) {
+        return false; // Die exceeds reticle limit
+    }
+    
+    return true; // Die is within reticle limit
+}
+
+void Die::apply_d2d_bandwidth_constraints(){
+    
+    float current_length = get_size(0);
+    float current_width = get_size(1);
+    
+    // Calculate current perimeter
+    float current_perimeter = 2.0f * (current_length + current_width);
+    
+    // Calculate D2D bandwidth using linear interpolation
+    // Bandwidth decreases linearly with perimeter
+    // 20mm*20mm die (perimeter=80mm) -> 20 TB/s
+    // 33mm*28mm die (perimeter=122mm) -> 10 TB/s
+    
+    float d2d_bandwidth;
+    
+    if (current_perimeter <= REFERENCE_PERIMETER) {
+        // For smaller dies, bandwidth is at maximum
+        d2d_bandwidth = REFERENCE_BANDWIDTH;
+    } else if (current_perimeter >= MAX_PERIMETER) {
+        // For larger dies, bandwidth is at minimum
+        d2d_bandwidth = MIN_BANDWIDTH;
+    } else {
+        // Linear interpolation between reference and maximum
+        float ratio = (current_perimeter - REFERENCE_PERIMETER) / (MAX_PERIMETER - REFERENCE_PERIMETER);
+        d2d_bandwidth = REFERENCE_BANDWIDTH - ratio * (REFERENCE_BANDWIDTH - MIN_BANDWIDTH);
+    }
+    
+    // Limit communication bandwidth to D2D bandwidth constraint
+    float current_comm_bandwidth = get_communication_bandwidth();
+    if (current_comm_bandwidth > d2d_bandwidth) {
+        set_communication_bandwidth(d2d_bandwidth);
+    }
+    
+    return;
+}
+
 void Die::update(){
 
     update_size(); 
     update_TFLOPS(); 
     update_DRAM_capacity(); 
     update_SRAM_capacity();
-    update_bandwidth(); 
+    update_bandwidth();
+    apply_d2d_bandwidth_constraints();
     return;
 
 }
@@ -702,10 +752,11 @@ void Die::print(){
          << Communication_unit.get_bandwidth() << " " 
          << Communication_unit.get_padding() << " ";
 
-    cout << up  << 9 << " " 
-         << down << 9 << " " 
-         << left << 9 << " " 
-         << right << 9 << " ";
+    // Use "." for empty permutation so space-separated read can parse correctly
+    cout << (up.empty() ? "." : up) << " "
+         << (down.empty() ? "." : down) << " "
+         << (left.empty() ? "." : left) << " "
+         << (right.empty() ? "." : right) << " ";
          
     cout << padding << " " 
          << bandwidth_per_area << " " 

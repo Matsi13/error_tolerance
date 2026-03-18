@@ -26,6 +26,11 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         Die die = solution.get_die();
         int columns = solution.get_columns();
         int rows = solution.get_rows();
+        if (columns <= 0) {
+            cerr << "Error: Invalid wafer (columns <= 0), skipping wafer " << wafer_idx << endl;
+            wafer_idx++;
+            continue;
+        }
         float model_size_per_die = 2 * model_size / columns; // consider 1F1B schedule, store weight gradient also
         float kv_cache_size_per_die = kv_cache_size / columns;
         int model_parallel_num = rows;
@@ -39,6 +44,12 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         float die_DRAM_bandwidth = die.get_memory_bandwidth();
         float die_communication_bandwidth = die.get_communication_bandwidth();
         float forward_DRAM_access_size = 0, forward_off_chip_access_size = 0;
+
+        if (die_TFLOPS <= 0.0f || die_DRAM_bandwidth <= 0.0f || off_chip_bandwidth <= 0.0f) {
+            cerr << "Error: Invalid wafer parameters (die_TFLOPS, die_DRAM_bandwidth, off_chip_bandwidth must be positive), skipping wafer " << wafer_idx << endl;
+            wafer_idx++;
+            continue;
+        }
 
         if(die_SRAM_size < model_size_per_die){
             forward_DRAM_access_size += model_size_per_die - die_SRAM_size;
@@ -183,12 +194,9 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
                 }
 
             }
-               outfile_ns3.close(); 
-            }
-    
-            
-         else {
-            cerr << "Error: Unable to create file " << filepath << endl;
+            outfile_ns3.close();
+        } else {
+            cerr << "Error: Unable to create file " << filepath_ns3 << endl;
         }
         
         wafer_idx++;

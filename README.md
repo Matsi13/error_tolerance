@@ -1,166 +1,381 @@
-# 项目名称
-
-## 1、功能分析
-
-### 1.1 可行解探索
-
-根据输入的计算核尺寸、存储单元尺寸、通信单元尺寸得出可行的排布方式，据此计算出单晶粒尺寸，进而得出在指定晶圆尺寸下可实现的晶圆性能
-
-### 1.2 误差分析
-
-根据1.1中建立的解空间，分析给定的仿真器误差下，可能取代当前最优解的其他排布方案
-
-### 1.3 性能分析
-
-对于一些特定结构的计算任务（例如不同参数的transformer类，加上一些已知的input长度和预期output长度），使用公式分析其计算访存通信需求，进而选择最接近于这些指标需求的空间架构
-
-计算访存通信需求会受到并行方式和重计算等优化手段的影响，所以每个应用的需求是一系列散点。这些都是总的计算访存通信需求，是不考虑数据依赖的情况，即所有的操作可以完全交织。
-
-思考：
-
-怎样考虑具体的依赖关系？如果有规律，或许这些依赖关系也可以被简单建模
-
-或者可以给出这种解析公式的误差上限，将误差范围内的架构也包括进来
-
-
-
-## 2、排布方式建模
-
-### 2.1. 类
-
-#### 2.1.1 计算核（Compute）
-
-尺寸，算力，需要的padding
-
-#### 2.1.2 存储单元（Memory）
-
-尺寸，带宽，容量，需要的padding
-
-#### 2.1.3 通信单元（Communication）
-
-尺寸，带宽，需要的padding
-
-#### 2.1.4 晶粒（Die）：
-
-用晶粒描述排列方式
-
-##### 2.1.1.1 成员
-
-尺寸、padding、算力、存储量、访存带宽、通信带宽
-
-计算核，存储单元，通信单元
-
-排布方式组合表：每个排布方式包括四个字符串，依次为up, down, left, right，表示对应边上排布的功能单元。用宏定义的字符标识这些功能单元。
-
-##### 2.1.1.2 成员函数
-
-update()：根据计算存储通信单元的排布计算尺寸和性能指标
-
-#### 2.1.5  晶圆（wafer）
-
-用晶圆描述解空间中的解
-
-##### 2.1.5.1 成员：
-
-尺寸，晶粒之间的padding，总算力，总存储，总访存带宽，总通信带宽
-
-使用的晶粒，晶粒行数，晶粒列数
-
-##### 2.1.5.2 成员函数
-
-print()：依次打印总算力，总存储，总访存带宽，总通信带宽
-
-update()：根据晶粒和晶圆尺寸计算晶圆上晶粒的行数、列数和晶圆的性能指标
-
-### 2.2 函数
-
-#### 2.2.1 列举排布方式
-
-Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Communication_unit, float die_padding, list\<Wafer\>& result, float relaxation, float wafer_length, float wafer_width, Threshold threshold)
-
-输入计算、存储、通信单元的参数，晶圆参数（尺寸，padding），设计参数（relaxation，最低性能指标）
-
-注：relaxation指每条边上的存储和通信单元总长度可以略微超过计算核的边长
-
-输出可行的晶粒配置
-
-#### 2.2.2 搜索可能的最优解
-
-Possible_optimal(queue\<Wafer\> solutions, Wafer& optimal, simulation_error& error, queue\<Wafer\>& possible_optimals)
-
-输入当前解空间，仿真器找到的最优解，仿真器可能产生的最大误差
-
-输出误差容限内所有可能的最优解
-
-#### 2.2.3 从手动配置的文件中读入参数
-
-Scan(list\<Compute\>& compute_configs, list\<Memory\>& memory_configs, list\<Communication\>& communication_configs, string input_path, Config& input_config)
-
-输入文件中依次列出晶圆参数、设计指标、可用的计算存储通信核数量和具体参数
-
-scan函数读取文件内容
-
-#### 2.2.4 批量生成配置参数
-
-Generate(list\<Compute\>& compute_configs, list\<Memory\>& memory_configs, list\<Communication\>& communication_configs, string input_path, Config& input_config)
-
-晶圆参数
-
-设计指标
-
-计算核：首先列出可用的计算核系列数量，每个系列包括以下参数：每面积可提供的算力，长度的迭代区间（最小值、迭代步长、最大值），宽度的迭代区间，padding
-
-存储单元：首先列出可用的存储单元系列数量，每个系列包括以下参数：每面积可提供的存储量，单位长度可提供的访存带宽，长度的迭代区间，宽度的迭代区间，padding
-
-通信单元：首先列出可用的通信单元系列数量，每个系列包括以下参数：单位长度可提供的通信带宽，长度的迭代区间，宽度的迭代区间，padding
-
-## 3、负载分析
-
-### 3.1 decode
-
-假设即将运行的任务是LLM，目前的序列长度$seq=200$，每个词向量的维度$d_{model}=512$，attention head数$h=8$， 矩阵$W^Q:d_{model}\times d_k, W^K:d_{model}\times d_k, W^V:d_{model}\times d_v$ ，其中$d_k=d_v=64$， $Q=XW^Q,K=XW^K,V=XW^V$， Attention层输出为$Z:1\times d_{v}$，$Z=softmax(\frac{QK^T}{\sqrt{d_k}})V$ 。FFN有两层，权重矩阵为$W_1:d_{model}\times hidden, W_2:hidden\times d_{model}$，其中$hidden=2048$。两个FFN层之后都有激活函数。可以认为除了KV_cache之外，其他权重一直保存在计算芯片的SRAM上，无需搬运。
-
-对于新的token，生成$QKV$的计算量为$3\times2\times d_{model}\times d_k \times h=1.5M$，生成$Z$的计算量为$5\times d_v\times h=2.5K$，FFN层的计算量为$2\times d_{model}\times hidden + hidden\times2 + 2\times hidden\times d_{model} + d_{model}\times 2=4M$，总计算量约为$5.5M$
-
-考虑到已有KV_cache的decode情况，此时的矩阵$K:(d_k\times h)\times seq$，矩阵$V:seq\times(d_k\times h)$，生成$Z$的计算量为$5 \times d_{model} \times seq \times d_{model} + 2 \times d_{model} \times d_{model} = 250M$，需要读取的KV_cache约为$seq\times d_{model} \times 2\times 2=400KB$，
-
-计算访存比$R_d=\frac{250\times1024}{400}\times \frac{1}{2250}=0.28$
-
-通用公式：
-
-一个transformer block一次前向推理的计算量为$C_{f} (seq)= 6 d_{model} d_k h + 5 d_v h + 2 d_{model} hidden + 2 hidden + 2 hidden d_{model} + 2 d_{model} + 5 d_{model} seq d_{model} + 2 d_{model}^2 $，
-
-访存量为$M_{f}(seq)=4seq d_{model} $，
-
-通信量为$N_{f}=seq*d_{model}$
-
-假设每个die上包含$l$个串联的 transformer block，生成了一个长度为$S$的输出，那么总计算量为$l*S*C_{f}(S/2)$，总访存量为$l*S*M_f(S/2)$，总通信量为$S/2*N_f$
-
-考虑反向传播过程。假设每$R$个transformer block设置一个检查点，每个检查点保留整个transformer block的中间值（不含输出）。一个transformer block的中间值总量为$M_{ime}=S*(d_{model}+2d_k*h+d_v*h+d_{model}+hidden+d_{model})$。LLM总共包含$L$个transformer block，当前die负责计算的是第$i\to i+l-1$层。检查点设置在第$i, i+R, i+2R, ......$层。则反向传播的计算量为$3*l*C_{f}(S)*\frac{R-1}{R}$，访存量为$M_{ime}*l/R$ 。
-
-使用1F1B策略，则流水线平稳运行时，计算压力为前向+反向，存储压力为$M_{ime}*(L-i+l/2-R/2)*(l/R)$，通信压力为前向+后向，访存压力为前向+后向。
-
-
-
-### 3.2 prefill
-
-考虑prefill情况，prompt长度为20，则计算量为$20*5.5M=110M$，计算访存比 $R_d=\frac{110}{5.5}\times \frac{1}{2250}=0.28$
-
-### 3.3 training
-
-![image-20240906102326999](C:\Users\Matsi\AppData\Roaming\Typora\typora-user-images\image-20240906102326999.png)
-
-以LLaMA为例，主要计算量在于其32层transformer block，每个transformer block有32个head。
-
-每个transformer block的权重总量约6MB，为了训练而保留的权重梯度为12MB，前向推理计算总量为$7.89e^{-2}$TFLOPS，反向传播计算总量相同。
-
-决定访存总量的是重计算方式，1MB的存储对应$7.89e^{-2}$TFLOPS计算量。
-
-### 3.4 权重同步
-
-考虑权重同步过程中的通信模式。
-
-假设16个die，每4个die保存一个完整网络，排布方式是2X2，则通信模式为：
-
-![wafer scale_00](D:\_实验室\2025春\PAPER\wafer scale_00.jpg)
-
+# Error Tolerance: Wafer-Scale Architecture Design Space Exploration
+
+A comprehensive C++ framework for exploring wafer-scale architectures and identifying optimal configurations for AI workloads through design space exploration, analytical modeling, and cycle-accurate simulation.
+
+## What This Project Does
+
+This tool addresses a critical challenge in AI hardware design: **finding optimal wafer-scale architectures that are robust to simulator errors**. It combines three complementary approaches:
+
+1. **Exhaustive Design Space Exploration** - Enumerate all feasible die/wafer configurations
+2. **Analytical Workload Modeling** - Model LLM transformer workloads with various parallelization strategies
+3. **Cycle-Accurate Simulation** - Validate designs using ns-3 network simulation via astra-sim
+
+The key innovation is **error tolerance analysis**: identifying which architectures remain optimal even when simulator metrics vary within error bounds.
+
+## Core Concepts
+
+### Architecture Hierarchy
+
+```
+Wafer (200mm × 200mm)
+  ├─ Die Grid (rows × columns)
+  │   └─ Die (≤33mm × 28mm reticle limit)
+  │       ├─ Compute Core (e.g., 32mm × 24mm, 38.4 TFLOPS)
+  │       ├─ Memory Units (HBM, attached to edges)
+  │       └─ Communication Units (D2D interconnect, attached to edges)
+```
+
+### Key Constraints
+
+- **Reticle Limit**: Die size ≤ 33mm × 28mm (manufacturing constraint)
+- **D2D Bandwidth**: Scales from 20 TB/s (small die) to 10 TB/s (large die) based on perimeter
+- **Bandwidth Allocation**: Total bandwidth split between memory and communication via `memory_bandwidth_ratio`
+- **Performance Threshold**: Minimum TFLOPS, memory capacity, and bandwidth requirements
+
+### Permutation Encoding
+
+Die edges are encoded as strings where:
+- `'0'` = Memory unit
+- `'1'` = Communication unit  
+- `'9'` = Delimiter (empty edge)
+
+Example: `"00011111119"` = 2 memory units + 8 communication units on one edge
+
+## Project Structure
+
+```
+error_tolerance/
+├── src/                      # C++ implementation (18 files)
+│   ├── Permutation.cpp       # Design space exploration & Pareto pruning
+│   ├── Die.cpp               # Die modeling with constraints
+│   ├── Wafer.cpp             # Wafer aggregation
+│   ├── Attention.cpp         # LLM transformer workload modeling
+│   ├── Pipeline.cpp          # Pipeline parallelism
+│   ├── Recompute.cpp         # Activation checkpointing
+│   ├── Analysis.cpp          # Workload-to-architecture matching
+│   ├── Distance.cpp          # Error tolerance analysis
+│   ├── Astra_API.cpp         # Simulator input generation
+│   ├── Simulated_Annealing.cpp # SA optimization
+│   └── [other modules]
+│
+├── include/                  # C++ headers (18 files)
+│   ├── Macro.h               # Constants and data structures
+│   ├── Die.h, Wafer.h        # Architecture abstractions
+│   ├── Attention.h           # Workload specifications
+│   └── [other headers]
+│
+├── test/                     # Unit tests (14 files)
+│   ├── *_test.cpp
+│   └── CMakeLists.txt
+│
+├── scripts/                  # Executable programs
+│   ├── main.cpp              # Main design space exploration
+│   ├── simulated_annealing_main.cpp # SA optimization
+│   └── run_simulated_annealing.sh
+│
+├── configuration/            # Configuration files
+│   ├── auto_generate.txt     # Auto-generation parameters
+│   ├── component_configuration.txt # Manual component specs
+│   └── optimal_wafer.txt     # Output: Pareto-optimal wafers
+│
+├── workloads/                # Workload specifications
+│   └── Llama_3B.txt          # 130-layer LLM workload
+│
+├── pyscript/                 # Python utilities
+│   ├── gen_network.py        # Generate network.yml
+│   ├── gen_system.py         # Generate system.json
+│   ├── gen_logical_network.py # Generate logical_network.json
+│   ├── gen_config_txt.py     # Generate config.txt
+│   └── simulated_annealing_ns3.py
+│
+├── astra/                    # Astra-sim integration
+│   ├── astra_analytical_batch.sh
+│   ├── astra_ns3_batch.sh
+│   ├── analyze_analytical_output.py
+│   └── analyze_ns3_output.py
+│
+├── astra-sim-guide/          # Astra-sim documentation
+│   ├── system_json.md
+│   ├── network_yml.md
+│   └── remote_memory_json.md
+│
+├── matlab/                   # Analysis scripts
+│   ├── performance.m
+│   ├── error_fit.m
+│   └── [other analysis]
+│
+├── docs/                     # Documentation (10 files)
+│   ├── COMPLETE_WORKFLOW_ANALYSIS.md
+│   ├── SIMULATED_ANNEALING_GUIDE.md
+│   ├── SA_INTEGRATION_GUIDE.md
+│   ├── VALIDATION_GUIDE.md
+│   └── [other docs]
+│
+└── output/                   # Simulation results
+    └── 0060/
+        ├── wafer/            # Optimal wafer configurations
+        ├── workload/         # Astra-sim workload files
+        ├── system/           # System configuration (JSON)
+        ├── network/          # Network topology (YAML)
+        ├── config/           # ns-3 configuration
+        ├── logical_network/  # Logical topology
+        └── physical_network/ # Physical network topology
+```
+
+## Workflow
+
+### Phase 1: Design Space Exploration
+
+```
+Configuration (auto_generate.txt)
+    ↓
+Generate.cpp / Scan.cpp
+    ↓ (Load component specs)
+Permutation.cpp
+    ↓ (Enumerate all valid die permutations)
+    ├─ Check reticle limit (33mm × 28mm)
+    ├─ Apply D2D bandwidth constraints
+    ├─ Prune dominated solutions (Pareto optimization)
+    └─ Filter by performance threshold
+    ↓
+Output: optimal_wafer.txt (Pareto-optimal wafers)
+```
+
+### Phase 2: Workload Modeling
+
+```
+Attention.cpp (Model transformer blocks)
+    ├─ Prefill/decode phases
+    ├─ Training/inference modes
+    └─ Calculate: TFLOPs, paramsize, access, traffic
+    ↓
+Pipeline.cpp (Merge layers with 1F1B schedule)
+    ↓
+Recompute.cpp (Activation checkpointing)
+    ↓
+Output: Workload metrics
+```
+
+### Phase 3: Astra-sim Integration
+
+```
+Astra_API.cpp (For each wafer)
+    ├─ Generate workload.txt (DATA format)
+    └─ Generate physical_network.txt (ns-3 format)
+    ↓
+Python scripts (pyscript/)
+    ├─ gen_network.py → network.yml (Ring topology)
+    ├─ gen_system.py → system.json (Scheduling policy)
+    ├─ gen_logical_network.py → logical_network.json
+    └─ gen_config_txt.py → config.txt (ns-3 config)
+    ↓
+Output: Complete astra-sim configuration
+```
+
+### Phase 4: Simulation & Analysis
+
+```
+ns-3 Backend (Cycle-accurate simulation)
+    ↓
+analyze_ns3_output.py (Parse results)
+    ↓
+Output: Optimal wafer with cycle count
+```
+
+## Three Search Strategies
+
+| Strategy | Approach | Speed | Accuracy | Use Case |
+|----------|----------|-------|----------|----------|
+| **Exhaustive** | Enumerate all feasible wafers | Slow | Guaranteed Pareto-optimal | Small design spaces |
+| **Exhaustive + Analytical → ns-3** | Filter with analytical backend, refine with ns-3 | Medium | Good | Medium design spaces |
+| **Simulated Annealing + ns-3** | Stochastic local search with ns-3 | Fast | Approximate | Large design spaces |
+
+### Simulated Annealing Features
+
+- **7 mutation types**: Change compute/memory/communication units, regenerate edge permutations
+- **Metropolis criterion**: Accept improvements always, worse solutions probabilistically
+- **Geometric cooling**: Temperature decreases by `cooling_rate` each iteration
+- **Direct ns-3 optimization**: Optimizes actual cycle counts, not estimates
+- **Automatic configuration generation**: All astra-sim files generated on-the-fly
+
+## Quick Start
+
+### Build
+
+```bash
+mkdir build && cd build
+cmake ..
+make
+```
+
+### Run Design Space Exploration
+
+```bash
+# Exhaustive search
+./build/error_tolerance
+
+# Simulated annealing with ns-3
+./scripts/run_simulated_annealing.sh
+```
+
+### Generate Astra-sim Configuration Files
+
+```bash
+cd pyscript
+python gen_network.py
+python gen_system.py
+python gen_logical_network.py
+python gen_config_txt.py
+```
+
+### Run Astra-sim Simulation
+
+```bash
+# Analytical backend
+./astra/astra_analytical_batch.sh
+
+# ns-3 backend
+./astra/astra_ns3_batch.sh
+```
+
+## Configuration
+
+### auto_generate.txt
+
+Specifies component specifications and wafer parameters:
+
+```
+wafer length: 200mm
+wafer width: 200mm
+compute chip: 12-15mm length, 10-13mm width, 0.05 TFLOPS/mm²
+memory unit: 5-8mm length, 5-7mm width, 0.16 GB/mm²
+communication unit: 1-2mm length, 2-3mm width, 10 GB/s per mm
+min TFLOPS: 200
+min SRAM: 100 GB
+min DRAM: 100 GB
+min memory bandwidth: 100 GB/s
+min communication bandwidth: 200 GB/s
+```
+
+### Workload Specification (Llama_3B.txt)
+
+Defines transformer workload in astra-sim format:
+
+```
+HYBRID_TRANSFORMER
+130                          # Number of layers
+layer_0 -1 TFLOPs ALLREDUCE comm_size ...
+layer_1 -1 TFLOPs ALLREDUCE comm_size ...
+...
+```
+
+## Key Algorithms
+
+### Pareto Pruning
+
+Keeps only non-dominated solutions:
+- Solution A dominates B if A is better in all metrics
+- Reduces 1000s of configurations to ~17 Pareto-optimal wafers
+
+### Error Tolerance Analysis
+
+Identifies robust architectures:
+1. Find optimal wafer with simulator
+2. Calculate error bounds (±10% TFLOPS, ±5% bandwidth, etc.)
+3. Identify alternative wafers within error bounds
+4. Robust solution = few alternatives (less sensitive to errors)
+
+### D2D Bandwidth Scaling
+
+Models physical interconnect limitations:
+- Small die (20mm × 20mm): 20 TB/s
+- Large die (33mm × 28mm): 10 TB/s
+- Linear interpolation based on perimeter
+
+## Output Format
+
+### optimal_wafer.txt
+
+Each line represents one Pareto-optimal wafer:
+
+```
+TFLOPS SRAM DRAM mem_bw comm_bw rows cols wafer_len wafer_wid
+compute_len compute_wid compute_tflops compute_sram compute_pad
+mem_len mem_wid mem_cap mem_bw mem_pad
+comm_len comm_wid comm_bw comm_pad
+up down left right
+die_pad band_per_area mem_bw_ratio
+final_mem_bw final_comm_bw
+```
+
+Example:
+```
+1152 576 921.6 1440 14700 5 6 200 200 32 24 38.4 19.2 0.1 8 8 10.24 16 0.1 1 2 10 0.1 9 00011111119 1111111111111111111119 1111111111111111111119 0.5 1 0.6 48 490
+```
+
+## Documentation
+
+- **[Complete Workflow Analysis](docs/COMPLETE_WORKFLOW_ANALYSIS.md)** - Full system architecture and data flow
+- **[Simulated Annealing Guide](docs/SIMULATED_ANNEALING_GUIDE.md)** - SA algorithm, tuning, and advanced features
+- **[SA Integration Guide](docs/SA_INTEGRATION_GUIDE.md)** - How SA fits into the complete workflow
+- **[Validation Guide](docs/VALIDATION_GUIDE.md)** - Testing and validation procedures
+- **[Performance Model](docs/performance_model.md)** - Analytical performance modeling details
+- **[Workload to Astra-sim](docs/workload_to_astra_sim.md)** - Workload file format specification
+
+## Dependencies
+
+- **C++ Compiler**: C++11 or later
+- **CMake**: 3.10 or later
+- **Python**: 3.6+ (for utility scripts)
+- **Astra-sim**: For cycle-accurate simulation (optional)
+- **ns-3**: Network simulator backend (optional)
+
+## Key Features
+
+✓ Exhaustive design space exploration with Pareto pruning  
+✓ Analytical LLM workload modeling (attention, pipeline, recompute)  
+✓ Error tolerance analysis for robust architecture selection  
+✓ Automatic astra-sim configuration file generation  
+✓ Simulated annealing for large design spaces  
+✓ Cycle-accurate ns-3 simulation integration  
+✓ Comprehensive unit tests (14 test files)  
+✓ Python utilities for batch processing  
+✓ MATLAB analysis scripts  
+
+## Example: Llama 3B Optimization
+
+The project includes a complete example optimizing for a 130-layer Llama 3B model:
+
+1. **Exploration**: Generates 17 Pareto-optimal wafer configurations
+2. **Modeling**: Analyzes Llama 3B workload (prefill/decode, training/inference)
+3. **Simulation**: Runs ns-3 on each configuration
+4. **Analysis**: Identifies optimal and robust architectures
+
+## Contributing
+
+1. Follow existing code structure and naming conventions
+2. Add unit tests for new features
+3. Update documentation
+4. Run all tests before submitting
+
+## License
+
+[Specify your license]
+
+## Citation
+
+If you use this tool in your research, please cite:
+
+```
+[Add citation information]
+```
+
+## Contact
+
+[Specify contact information]
+
+---
+
+**Last Updated**: March 2026  
+**Project Status**: Active Development  
+**Latest Features**: Simulated Annealing Integration, Error Tolerance Analysis

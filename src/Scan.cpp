@@ -75,7 +75,7 @@ void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Com
         input >> SRAM_capacity;
         input >> title;
         input >> compute_padding;
-        Compute Compute_unit(compute_sizes, TFLOPS, compute_padding, SRAM_capacity);
+        Compute Compute_unit(compute_sizes, TFLOPS, SRAM_capacity, compute_padding);
         compute_configs.push_back(Compute_unit);
     }
 

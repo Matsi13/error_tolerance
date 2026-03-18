@@ -63,7 +63,7 @@ void Wafer::print(){
 
 
 const float Wafer::get_size(int idx)const{
-
+    if (idx != 0 && idx != 1) return 0.0f;
     return sizes[idx];
 
 }
@@ -135,7 +135,7 @@ void Wafer::set_die(Die& newdie){
 
 
 void Wafer::update(){
-
+    // rows = wafer length (sizes[0]) / die length (size 0); columns = wafer width (sizes[1]) / die width (size 1)
     float die_sizes[2] = {die.get_size(0), die.get_size(1)};
     this -> rows = floor(sizes[0] / die_sizes[0]);
     this -> columns = floor(sizes[1] / die_sizes[1]);

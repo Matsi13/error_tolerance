@@ -82,14 +82,14 @@ bool is_better_permutation(string first, string second, Memory& Memory_unit, Com
                 case MEMORY_UNIT : {
                     second_capacity += Memory_unit.get_capacity();
                     second_memory_bandwidth += Memory_unit.get_bandwidth();
-                    second_height = max(first_height, Memory_unit.get_size(1));
+                    second_height = max(second_height, Memory_unit.get_size(1));
                     second_length += Memory_unit.get_size(0);
                     break;
                 }
                 case COMMUNICATION_UNIT : {
     
                     second_communication_bandwidth += Communication_unit.get_bandwidth();
-                    second_height = max(first_height, Communication_unit.get_size(1));
+                    second_height = max(second_height, Communication_unit.get_size(1));
                     second_length += Communication_unit.get_size(0);
     
                     break;
@@ -151,7 +151,7 @@ void Search_permutation(list<string>& permutation_side, float Compute_size, Memo
             }
 
             float remain_size = Compute_size - current_size + relaxation; // the remaining available length for new components
-            assert(remain_size >= 0);
+            if (remain_size < 0) continue;  // invalid relaxation or size, skip this branch
 
             if (remain_size >= Memory_size + component_padding){  // whether a memory unit can be added
                 string new_solution = solution;
@@ -337,6 +337,10 @@ void Permutation(Compute& Compute_unit, Memory& Memory_unit, Communication& Comm
                 for (auto idx_right = permutation_width.begin(); idx_right != permutation_width.end(); idx_right++){
 
                     Die Die_instance(die_padding, bandwidth_per_area, memory_bandwidth_ratio, Compute_unit, Memory_unit, Communication_unit, *idx_up, *idx_down, *idx_left, *idx_right);
+                    // check if die exceeds reticle limit, abandon if it does
+                    if (!Die_instance.check_reticle_limit()) {
+                        continue; // Skip this permutation as it exceeds reticle limit
+                    }
                     Wafer Wafer_instance(wafer_sizes, Die_instance);
                     // check whether the solution meets the minimal performance metrics
                     if (is_over_threshold(Wafer_instance, threshold)){

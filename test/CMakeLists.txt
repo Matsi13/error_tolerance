@@ -54,5 +54,9 @@ add_executable(Astra_API_test Astra_API_test.cpp)
 target_link_libraries(Astra_API_test astra_API_lib permutation_lib generate_lib wafer_lib)
 add_test(NAME Astra_API_test COMMAND Astra_API_test)
 
+add_executable(Simulated_Annealing_test Simulated_Annealing_test.cpp)
+target_link_libraries(Simulated_Annealing_test simulated_annealing_lib generate_lib)
+add_test(NAME Simulated_Annealing_test COMMAND Simulated_Annealing_test)
+
 
 

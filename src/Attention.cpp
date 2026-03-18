@@ -321,7 +321,7 @@ void Attention::update_TFLOPs(){
     float v_decode_TFLOPs = output_avg * d_model * d_v * head_num * 2 * 1e-12;
     float RoPE_decode_TFLOPs = output_avg * (d_k + d_q) * head_num * 9 * 1e-12;
     float attention_score_decode_TFLOPs = d_k * head_num * (2 * prompt_avg + output_avg + 1) * output_avg * 1e-12; 
-    float softmax_decode_TFLOPs = 3 * (2 * prompt_avg + 1 + output_avg) * output_avg;
+    float softmax_decode_TFLOPs = 3 * (2 * prompt_avg + 1 + output_avg) * output_avg * 1e-12;
     float dot_product_decode_TFLOPs = d_v * head_num * (2 * prompt_avg + 1 + output_avg) * output_avg * 1e-12;
     float linear_1_decode_TFLOPs = head_num * d_v * d_hidden  * (2 * prompt_avg + 1 + output_avg) * output_avg * 1e-12;
 
@@ -402,7 +402,7 @@ void Attention::update_access(){
 
 void Attention::update_traffic(){
 
-    float output_traffic = d_model * (prompt_avg + output_avg) * sizeof(float) * 1e-12;
+    float output_traffic = d_model * (prompt_avg + output_avg) * sizeof(float) * 1e-9;  // GB, consistent with update_access
     float total_traffic = 0;
 
     switch(mode){

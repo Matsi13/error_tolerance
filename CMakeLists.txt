@@ -12,6 +12,9 @@ add_subdirectory(src)
 add_executable(${PROJECT_NAME} main.cpp)
 # target_link_libraries(${PROJECT_NAME} total_lib)
 
+add_executable(simulated_annealing simulated_annealing_main.cpp)
+target_link_libraries(simulated_annealing simulated_annealing_lib generate_lib astra_API_lib)
+
 
 include(CTest)
 add_subdirectory(test)

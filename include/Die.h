@@ -84,7 +84,19 @@ class Die{
         void update_memory_bandwidth(); // update memory bandwidth based on based on memory units
         void update_communication_bandwidth(); // update communication bandwidth based on communication units
         void update_bandwidth(); // update memory and communication bandwidth with thershold
+        bool check_reticle_limit(); // check if die size exceeds reticle limit (33mm * 28mm)
+        void apply_d2d_bandwidth_constraints(); // apply D2D bandwidth based on die perimeter
         void update(); // update size, padding, TFLOPS, capacity and bandwidth based on the new permutation
+        
+        // Constants for die size constraints
+        static constexpr float MAX_DIE_LENGTH = 33.0f; // mm
+        static constexpr float MAX_DIE_WIDTH = 28.0f;   // mm
+        
+        // Constants for D2D bandwidth calculation
+        static constexpr float REFERENCE_PERIMETER = 80.0f; // 20mm * 4mm
+        static constexpr float REFERENCE_BANDWIDTH = 20.0f; // TB/s for 20mm*20mm die
+        static constexpr float MAX_PERIMETER = 122.0f;      // 2 * (33mm + 28mm)
+        static constexpr float MIN_BANDWIDTH = 10.0f;       // TB/s for 33mm*28mm die
 
 };
 

@@ -94,3 +94,13 @@ Die.cpp
 Wafer.cpp
 )
 
+add_library(simulated_annealing_lib
+Simulated_Annealing.cpp
+Memory.cpp
+Compute.cpp
+Communication.cpp
+Die.cpp
+Wafer.cpp
+Permutation.cpp
+)
+

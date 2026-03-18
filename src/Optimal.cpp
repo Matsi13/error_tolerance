@@ -19,6 +19,7 @@ Wafer Get_optimal(string input_path){
 
     if(!input.is_open()){
         cout << "No existing optimal wafer file!" << endl;
+        return Wafer();  // Return default-constructed Wafer; caller should check validity
     }
     
     float total_TFLOPS, total_SRAM_capacity, total_DRAM_capacity, total_memory_bandwidth, total_communication_bandwidth;
@@ -36,11 +37,11 @@ Wafer Get_optimal(string input_path){
     input >> Memory_sizes[0] >> Memory_sizes[1] >> DRAM_capacity >> Memory_bandwidth >> Memory_padding;
     input >> Communication_sizes[0] >> Communication_sizes[1] >> Communication_bandwidth >> Communication_padding;
     input >> up >> down >> left >> right;
+    if (up == ".") up.clear();
+    if (down == ".") down.clear();
+    if (left == ".") left.clear();
+    if (right == ".") right.clear();
     input >> die_padding >> bandwidth_per_area >> memory_bandwidth_ratio;
-    up.pop_back();
-    down.pop_back();
-    left.pop_back();
-    right.pop_back();
 
     Compute Compute_unit(Compute_sizes, TFLOPS, SRAM_capacity, Compute_padding);
     Memory Memory_unit(Memory_sizes, Memory_bandwidth, DRAM_capacity, Memory_padding);

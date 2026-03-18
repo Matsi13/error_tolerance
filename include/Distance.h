@@ -7,7 +7,6 @@
 #include "Macro.h"
 #include "Die.h"
 #include "Wafer.h"
-#include "Distance.h"
 
 // calculate the distance between two solutions
 solution_distance calculate_distance(Wafer& first, Wafer& second); 

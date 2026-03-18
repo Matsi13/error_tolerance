@@ -141,8 +141,8 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
         getline(input, title);
         // cout << compute_padding << endl;
 
-        int length_num = (compute_length_min == compute_length_max) ? 1 : floor((compute_length_max - compute_length_min) / compute_length_stride);
-        int width_num = (compute_width_min == compute_width_max) ? 1 : floor((compute_width_max - compute_width_min) / compute_width_stride);
+        int length_num = (compute_length_min == compute_length_max) ? 1 : (1 + (int)floor((compute_length_max - compute_length_min) / compute_length_stride));
+        int width_num = (compute_width_min == compute_width_max) ? 1 : (1 + (int)floor((compute_width_max - compute_width_min) / compute_width_stride));
 
         for (int j = 0; j < length_num; j++){
 
@@ -197,7 +197,7 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
         // cout << title << endl;
         input >> memory_length_min >> memory_length_stride >> memory_length_max;
         getline(input, title);
-        // cout << memory_length_min << ' ' << memory_length_stride << ' ' << memory_length_stride << endl;
+        // cout << memory_length_min << ' ' << memory_length_stride << ' ' << memory_length_max << endl;
 
         getline(input, title);
         // cout << title << endl;
@@ -211,8 +211,8 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
         getline(input, title);
         // cout << memory_padding << endl;
 
-        int length_num = (memory_length_min == memory_length_max) ? 1 : floor((memory_length_max - memory_length_min) / memory_length_stride);
-        int width_num = (memory_width_min == memory_width_max) ? 1 : floor((memory_width_max - memory_width_min) / memory_width_stride);
+        int length_num = (memory_length_min == memory_length_max) ? 1 : (1 + (int)floor((memory_length_max - memory_length_min) / memory_length_stride));
+        int width_num = (memory_width_min == memory_width_max) ? 1 : (1 + (int)floor((memory_width_max - memory_width_min) / memory_width_stride));
 
         for (int j = 0; j < length_num; j++){
             
@@ -268,8 +268,8 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
         getline(input, title);
         // cout << communication_padding << endl;
 
-        int length_num = (communication_length_min == communication_length_max) ? 1 : floor((communication_length_max - communication_length_min) / communication_length_stride);
-        int width_num = (communication_width_min == communication_width_max) ? 1 : floor((communication_width_max - communication_width_min) / communication_width_stride);
+        int length_num = (communication_length_min == communication_length_max) ? 1 : (1 + (int)floor((communication_length_max - communication_length_min) / communication_length_stride));
+        int width_num = (communication_width_min == communication_width_max) ? 1 : (1 + (int)floor((communication_width_max - communication_width_min) / communication_width_stride));
 
         for (int j = 0; j < length_num; j++){
 

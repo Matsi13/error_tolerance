@@ -10,7 +10,7 @@ Workload::Workload(float TFLOPs, float paramsize, float access, float traffic){
     this->TFLOPs = TFLOPs;
     this->paramsize = paramsize;
     this->access = access;
-    this-> traffic = traffic;
+    this->traffic = traffic;
 
 }
 
