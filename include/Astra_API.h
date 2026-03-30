@@ -9,7 +9,9 @@
 using namespace std;
 
 int time2cycle(float time, float freq);
-void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_size, float kv_cache_size, float traffic, list<Wafer> solutions, string path_workload,  string path_physical_network, string config);
+// HBM_bandwidth: off-wafer HBM bandwidth (GB/s), used when on-die memory capacity
+// is insufficient to hold the full model/KV-cache working set.
+void astra_API(float freq, float HBM_bandwidth, float TFLOPs, float model_size, float kv_cache_size, float traffic, list<Wafer> solutions, string path_workload,  string path_physical_network, string config);
 
 #endif
 

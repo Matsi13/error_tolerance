@@ -47,7 +47,7 @@ void Wafer::print(){
 
     cout << TFLOPS<< " " 
          << SRAM_capacity  << " " 
-         << DRAM_capacity << " " 
+         << on_die_mem_capacity << " " 
          << memory_bandwidth << " " 
          << communication_bandwidth << " " 
          << rows << " " 
@@ -83,9 +83,9 @@ const float Wafer::get_SRAM_capacity()const{
 }
 
 
-const float Wafer::get_DRAM_capacity()const{
+const float Wafer::get_on_die_mem_capacity()const{
 
-    return DRAM_capacity;
+    return on_die_mem_capacity;
 
 }
 
@@ -142,7 +142,7 @@ void Wafer::update(){
     int die_num = rows * columns;
     this->TFLOPS = die.get_TFLOPS() * die_num;
     this->SRAM_capacity = die.get_SRAM_capacity() * die_num;
-    this->DRAM_capacity = die.get_DRAM_capacity() * die_num;
+    this->on_die_mem_capacity = die.get_on_die_mem_capacity() * die_num;
     this->memory_bandwidth = die.get_memory_bandwidth() * die_num;
     this->communication_bandwidth = die.get_communication_bandwidth() * die_num;
 

@@ -220,22 +220,73 @@ make
 
 ### Generate Astra-sim Configuration Files
 
+Use the one-command shell script:
+
 ```bash
-cd pyscript
-python gen_network.py
-python gen_system.py
-python gen_logical_network.py
-python gen_config_txt.py
+chmod +x scripts/generate_all_configs.sh
+./scripts/generate_all_configs.sh ./output/0070/0070_Wafer.txt ./output/0070
+```
+
+This generates:
+- `logical_network/*.json`
+- `network/*.yml`
+- `system/*.json`
+- `config/*.txt`
+
+You can also run Python scripts individually:
+
+```bash
+python3 pyscript/gen_logical_network.py
+python3 pyscript/gen_network.py
+python3 pyscript/gen_system.py
+python3 pyscript/gen_config_txt.py
 ```
 
 ### Run Astra-sim Simulation
 
-```bash
-# Analytical backend
-./astra/astra_analytical_batch.sh
+#### 1) Analytical backend for all wafers in a wafer file
 
-# ns-3 backend
-./astra/astra_ns3_batch.sh
+```bash
+chmod +x scripts/run_astra_analytical_batch_from_wafer.sh
+./scripts/run_astra_analytical_batch_from_wafer.sh \
+  ./output/0070/0070_Wafer.txt \
+  ./configs/0070/workload_et \
+  ./configs/0070/system \
+  ./configs/0070/network \
+  ./configs/0070/remote_memory.json \
+  ./configs/0070/analytical_output
+```
+
+#### 2) Select best wafer and wafers within error bound
+
+```bash
+python3 pyscript/select_fast_wafers.py \
+  ./configs/0070/analytical_output \
+  0070 \
+  --error-bound 0.05 \
+  --idx-output ./output/0070/possible_optimal.txt \
+  --summary-output ./output/0070/selection_summary.txt
+```
+
+#### 3) Run ns-3 backend only for selected wafers
+
+```bash
+chmod +x scripts/run_ns3_batch_from_possible_optimal.sh
+./scripts/run_ns3_batch_from_possible_optimal.sh \
+  ./output/0070/possible_optimal.txt \
+  ./output/0070/0070_Wafer.txt \
+  ./configs/0070/workload_et \
+  ./configs/0070/system \
+  ./configs/0070/config \
+  ./configs/0070/remote_memory.json \
+  ./configs/0070/logical_network \
+  ./configs/0070/ns3_output
+```
+
+#### 4) Optional: visualize die layouts for each wafer
+
+```bash
+python3 pyscript/visualize_die.py ./output/0070/0070_Wafer.txt ./output/0070/die_viz
 ```
 
 ## Configuration

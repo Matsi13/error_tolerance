@@ -19,12 +19,17 @@
 #define ACCESS_ERR 2
 #define TRAFF_ERR 3
 
+// Memory hierarchy (realistic):
+//   Level 1: SRAM          - on compute core (fastest, smallest)
+//   Level 2: on_die_mem    - eDRAM/SRAM chiplets attached to die edges (modelled here)
+//   Level 3: HBM           - off-wafer HBM (not modelled; passed as external bandwidth)
+
 // the minimal performance metrics that the wafer must satisfy
 struct Threshold{
 
     float TFLOPS;
-    float SRAM_capacity;
-    float DRAM_capacity;
+    float SRAM_capacity;          // on-core SRAM capacity (GB)
+    float on_die_mem_capacity;    // on-die eDRAM/SRAM chiplet capacity (GB)
     float memory_bandwidth;
     float communication_bandwidth;
 
@@ -51,8 +56,8 @@ struct simulation_error{
     float TFLOPS_negative;
     float SRAM_capacity_positive;
     float SRAM_capacity_negative;
-    float DRAM_capacity_positive;
-    float DRAM_capacity_negative;
+    float on_die_mem_capacity_positive;   // on-die eDRAM/SRAM chiplet capacity error
+    float on_die_mem_capacity_negative;
     float memory_bandwidth_positive;
     float memory_bandwidth_negative;
     float communication_bandwidth_positive;
@@ -64,7 +69,7 @@ struct simulation_error{
 struct solution_distance{
     float TFLOPS;
     float SRAM_capacity;
-    float DRAM_capacity;
+    float on_die_mem_capacity;    // on-die eDRAM/SRAM chiplet capacity
     float memory_bandwidth;
     float communication_bandwidth;
 };
@@ -97,8 +102,8 @@ struct Arch_error{
     float TFLOPS_negative;
     float SRAM_capacity_positive;
     float SRAM_capacity_negative;
-    float DRAM_capacity_positive;
-    float DRAM_capacity_negative;
+    float on_die_mem_capacity_positive;   // on-die eDRAM/SRAM chiplet capacity error
+    float on_die_mem_capacity_negative;
     float memory_bandwidth_positive;
     float memory_bandwidth_negative;
     float communication_bandwidth_positive;

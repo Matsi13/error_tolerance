@@ -22,19 +22,19 @@ Wafer Get_optimal(string input_path){
         return Wafer();  // Return default-constructed Wafer; caller should check validity
     }
     
-    float total_TFLOPS, total_SRAM_capacity, total_DRAM_capacity, total_memory_bandwidth, total_communication_bandwidth;
+    float total_TFLOPS, total_SRAM_capacity, total_on_die_mem_capacity, total_memory_bandwidth, total_communication_bandwidth;
     int rows, columns;
     float Wafer_sizes[2];
     float Compute_sizes[2], TFLOPS, SRAM_capacity, Compute_padding;
-    float Memory_sizes[2], DRAM_capacity, Memory_bandwidth, Memory_padding;
+    float Memory_sizes[2], on_die_mem_capacity, Memory_bandwidth, Memory_padding;
     float Communication_sizes[2], Communication_bandwidth, Communication_padding;
     string up, down, left, right;
     float die_padding, bandwidth_per_area, memory_bandwidth_ratio;
     
-    input >> total_TFLOPS >> total_SRAM_capacity >> total_DRAM_capacity >> total_memory_bandwidth >> total_communication_bandwidth;
+    input >> total_TFLOPS >> total_SRAM_capacity >> total_on_die_mem_capacity >> total_memory_bandwidth >> total_communication_bandwidth;
     input >> rows >> columns >> Wafer_sizes[0] >> Wafer_sizes[1];
     input >> Compute_sizes[0] >> Compute_sizes[1] >> TFLOPS >> SRAM_capacity >> Compute_padding;
-    input >> Memory_sizes[0] >> Memory_sizes[1] >> DRAM_capacity >> Memory_bandwidth >> Memory_padding;
+    input >> Memory_sizes[0] >> Memory_sizes[1] >> on_die_mem_capacity >> Memory_bandwidth >> Memory_padding;
     input >> Communication_sizes[0] >> Communication_sizes[1] >> Communication_bandwidth >> Communication_padding;
     input >> up >> down >> left >> right;
     if (up == ".") up.clear();
@@ -44,7 +44,7 @@ Wafer Get_optimal(string input_path){
     input >> die_padding >> bandwidth_per_area >> memory_bandwidth_ratio;
 
     Compute Compute_unit(Compute_sizes, TFLOPS, SRAM_capacity, Compute_padding);
-    Memory Memory_unit(Memory_sizes, Memory_bandwidth, DRAM_capacity, Memory_padding);
+    Memory Memory_unit(Memory_sizes, Memory_bandwidth, on_die_mem_capacity, Memory_padding);
     Communication Communication_unit(Communication_sizes, Communication_bandwidth, Communication_padding);
     
     Die Die_instance(die_padding, bandwidth_per_area, memory_bandwidth_ratio, Compute_unit, Memory_unit, Communication_unit, up, down, left, right);

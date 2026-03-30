@@ -58,7 +58,7 @@ void Scan(list<Compute>& compute_configs, list<Memory>& memory_configs, list<Com
     input >> title;
     input >> input_config.threshold.SRAM_capacity;
     input >> title;
-    input >> input_config.threshold.DRAM_capacity;
+    input >> input_config.threshold.on_die_mem_capacity;
     input >> title;
     input >> input_config.threshold.memory_bandwidth;
     input >> title;

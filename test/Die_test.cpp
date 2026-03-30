@@ -46,7 +46,7 @@ int main(){
     assert(Die_instance.get_padding() == 2);
     assert(Die_instance.get_TFLOPS() == 10);
     assert(Die_instance.get_SRAM_capacity() == 5);
-    assert(Die_instance.get_DRAM_capacity() == 192);
+    assert(Die_instance.get_on_die_mem_capacity() == 192);
     assert(Die_instance.get_memory_bandwidth() == 32);
     assert(Die_instance.get_communication_bandwidth() == 4);
     

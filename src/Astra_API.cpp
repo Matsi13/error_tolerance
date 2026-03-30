@@ -18,7 +18,9 @@ int time2cycle(float time, float freq){
     
 }
 
-void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_size, float kv_cache_size, float traffic, list<Wafer> solutions, string path_workload, string path_physical_network, string config){
+// HBM_bandwidth: off-wafer HBM bandwidth (GB/s), used when on-die memory (eDRAM/SRAM chiplets)
+// cannot hold the full model weights or KV-cache. Spilled data is fetched from off-wafer HBM.
+void astra_API(float freq, float HBM_bandwidth, float TFLOPs, float model_size, float kv_cache_size, float traffic, list<Wafer> solutions, string path_workload, string path_physical_network, string config){
 
     int wafer_idx = 0;
     for (auto it = solutions.begin(); it != solutions.end(); it++){
@@ -39,37 +41,39 @@ void astra_API(float freq, float off_chip_bandwidth, float TFLOPs, float model_s
         float die_TFLOPS = die.get_TFLOPS();
         float forward_compute_time = TFLOPs_per_die / die_TFLOPS;
         
-        float die_SRAM_size = die.get_SRAM_capacity();
-        float forward_die_DRAM_size = die.get_DRAM_capacity();
-        float die_DRAM_bandwidth = die.get_memory_bandwidth();
+        float die_SRAM_size = die.get_SRAM_capacity();          // on-core SRAM
+        float forward_on_die_mem_size = die.get_on_die_mem_capacity(); // on-die eDRAM/SRAM chiplets
+        float die_mem_bandwidth = die.get_memory_bandwidth();     // bandwidth to on-die memory chiplets
         float die_communication_bandwidth = die.get_communication_bandwidth();
-        float forward_DRAM_access_size = 0, forward_off_chip_access_size = 0;
+        float forward_on_die_access_size = 0, forward_HBM_access_size = 0; // HBM = off-wafer spill
 
-        if (die_TFLOPS <= 0.0f || die_DRAM_bandwidth <= 0.0f || off_chip_bandwidth <= 0.0f) {
-            cerr << "Error: Invalid wafer parameters (die_TFLOPS, die_DRAM_bandwidth, off_chip_bandwidth must be positive), skipping wafer " << wafer_idx << endl;
+        if (die_TFLOPS <= 0.0f || die_mem_bandwidth <= 0.0f || HBM_bandwidth <= 0.0f) {
+            cerr << "Error: Invalid wafer parameters (die_TFLOPS, die_mem_bandwidth, HBM_bandwidth must be positive), skipping wafer " << wafer_idx << endl;
             wafer_idx++;
             continue;
         }
 
+        // Memory access: model weights first fill SRAM, overflow goes to on-die eDRAM/SRAM chiplets
         if(die_SRAM_size < model_size_per_die){
-            forward_DRAM_access_size += model_size_per_die - die_SRAM_size;
-            forward_die_DRAM_size -= model_size_per_die - die_SRAM_size;
+            forward_on_die_access_size += model_size_per_die - die_SRAM_size;
+            forward_on_die_mem_size -= model_size_per_die - die_SRAM_size;
         }
 
-        if(forward_die_DRAM_size >= kv_cache_size_per_die){
+        // KV-cache: fill remaining on-die memory, overflow spills to off-wafer HBM
+        if(forward_on_die_mem_size >= kv_cache_size_per_die){
             
-            forward_DRAM_access_size += kv_cache_size_per_die;
+            forward_on_die_access_size += kv_cache_size_per_die;
             
         } else {
 
-            forward_DRAM_access_size += forward_die_DRAM_size;
-            forward_off_chip_access_size += kv_cache_size_per_die - forward_die_DRAM_size;
+            forward_on_die_access_size += forward_on_die_mem_size;
+            forward_HBM_access_size += kv_cache_size_per_die - forward_on_die_mem_size;
         
         }
 
-        float forward_DRAM_access_time = forward_DRAM_access_size / die_DRAM_bandwidth;
-        float forward_off_chip_access_time = forward_off_chip_access_size / off_chip_bandwidth;
-        float forward_access_time = max(forward_DRAM_access_time, forward_off_chip_access_time);
+        float forward_on_die_access_time = forward_on_die_access_size / die_mem_bandwidth;
+        float forward_HBM_access_time = forward_HBM_access_size / HBM_bandwidth; // off-wafer HBM spill
+        float forward_access_time = max(forward_on_die_access_time, forward_HBM_access_time);
 
 
         int forward_cycle = time2cycle(max(forward_compute_time, forward_access_time) / columns, freq);

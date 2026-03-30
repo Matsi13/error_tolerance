@@ -11,6 +11,11 @@
 
 using namespace std;
 
+// Memory hierarchy modelled inside Die:
+//   SRAM          - on compute core (Compute_unit.get_capacity())
+//   on_die_mem    - eDRAM/SRAM chiplets on die edges (Memory_unit instances)
+//   HBM           - off-wafer; NOT modelled here, passed externally as bandwidth
+
 class Die{
     public: 
         Die(){};
@@ -24,8 +29,8 @@ class Die{
         const float get_bandwidth_per_area()const;
         const float get_memory_bandwidth_ratio()const;
         const float get_TFLOPS()const;
-        const float get_SRAM_capacity()const;
-        const float get_DRAM_capacity()const;
+        const float get_SRAM_capacity()const;         // on-core SRAM
+        const float get_on_die_mem_capacity()const;   // on-die eDRAM/SRAM chiplets
         const float get_memory_bandwidth()const;
         const float get_communication_bandwidth()const;
         const Compute get_Compute_unit()const;
@@ -53,8 +58,8 @@ class Die{
         float sizes[2];
         float padding;
         float TFLOPS;
-        float SRAM_capacity;
-        float DRAM_capacity;
+        float SRAM_capacity;        // on-core SRAM capacity (from Compute_unit)
+        float on_die_mem_capacity;  // total on-die eDRAM/SRAM chiplet capacity
         float memory_bandwidth;
         float communication_bandwidth;
         float bandwidth_per_area; // in 2.5D package, the bandwidth available is limited by the area of compute core
@@ -72,18 +77,18 @@ class Die{
         void set_size(float size, int index);
         void set_TFLOPS(float TFLOPS);
         void set_SRAM_capacity(float capacity);
-        void set_DRAM_capacity(float capacity);
+        void set_on_die_mem_capacity(float capacity);  // sets on-die eDRAM/SRAM chiplet capacity
 
         void set_memory_bandwidth(float memory_bandwidth);
         void set_communication_bandwidth(float communication_bandwidth);
         
         void update_size(); // update size based on all units
         void update_TFLOPS(); // update TFLOPS based on compute unit
-        void update_SRAM_capacity(); // update capacity based on memory units
-        void update_DRAM_capacity(); // update capacity based on memory units
-        void update_memory_bandwidth(); // update memory bandwidth based on based on memory units
+        void update_SRAM_capacity(); // update on-core SRAM from compute unit
+        void update_on_die_mem_capacity(); // update on-die eDRAM/SRAM chiplet capacity from memory units
+        void update_memory_bandwidth(); // update memory bandwidth based on memory units
         void update_communication_bandwidth(); // update communication bandwidth based on communication units
-        void update_bandwidth(); // update memory and communication bandwidth with thershold
+        void update_bandwidth(); // update memory and communication bandwidth with threshold
         bool check_reticle_limit(); // check if die size exceeds reticle limit (33mm * 28mm)
         void apply_d2d_bandwidth_constraints(); // apply D2D bandwidth based on die perimeter
         void update(); // update size, padding, TFLOPS, capacity and bandwidth based on the new permutation
@@ -93,7 +98,7 @@ class Die{
         static constexpr float MAX_DIE_WIDTH = 28.0f;   // mm
         
         // Constants for D2D bandwidth calculation
-        static constexpr float REFERENCE_PERIMETER = 80.0f; // 20mm * 4mm
+        static constexpr float REFERENCE_PERIMETER = 80.0f; // 20mm * 4 sides
         static constexpr float REFERENCE_BANDWIDTH = 20.0f; // TB/s for 20mm*20mm die
         static constexpr float MAX_PERIMETER = 122.0f;      // 2 * (33mm + 28mm)
         static constexpr float MIN_BANDWIDTH = 10.0f;       // TB/s for 33mm*28mm die

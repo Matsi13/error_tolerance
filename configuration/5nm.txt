@@ -1,0 +1,76 @@
+wafer length :
+220
+wafer width :
+220
+die padding :
+0.05
+bandwidth_per_area:
+18.0
+memory_bandwidth_ratio:
+0.8
+relaxation :
+0.02
+min TFLOPS :
+25000
+min SRAM_capacity :
+80
+min capacity :
+512
+min memory bandwidth :
+45000
+min communication bandwidth :
+15000
+available compute chip types :
+1
+TFLOPS per area :
+1.5
+SRAM capacity per area :
+0.00045
+compute chip length :
+16 0 16
+compute chip width :
+12 0 12
+compute chip padding :
+0.02
+available memory types :
+3
+DRAM capacity per area :
+0.297521
+bandwidth per length :
+111.6
+memory length :
+11 0 11
+memory width :
+11 0 11
+memory padding :
+0.12
+DRAM capacity per area :
+0.05
+bandwidth per length :
+50.0
+memory length :
+5 2.5 10
+memory width :
+5 2.5 10
+memory padding :
+0.04
+DRAM capacity per area :
+0.115
+bandwidth per length :
+1500.0
+memory length :
+2 2 4
+memory width :
+2 2 4
+memory padding :
+0.01
+available communication types :
+1
+bandwidth per length :
+100.0
+communication length :
+1 0 1
+communication width :
+1 0.5 2
+communication padding :
+0.02

@@ -1,37 +1,31 @@
-import os
+﻿import os
+from wafer_utils import extract_config, load_wafer_file, ensure_dir, out_filename
+
+
+def generate_network_yml_from_wafer_file(wafer_file: str, output_path: str):
+    config = extract_config(wafer_file)
+    ensure_dir(output_path)
+    for entry in load_wafer_file(wafer_file):
+        bw = entry.comm_bw / 4.0
+        yml_content = (
+            "topology: [Ring, Ring]\n"
+            f"npus_count: [{entry.columns}, {entry.rows}]\n"
+            f"bandwidth: [{bw}, {bw}]\n"
+            "latency: [10.0, 10.0]\n"
+        )
+        filename = out_filename(config, entry.idx, "network.yml")
+        with open(os.path.join(output_path, filename), "w") as f:
+            f.write(yml_content)
+        print(f"Generated: {filename}")
+
 
 def generate_network_yml(config: str, input_path: str, output_path: str):
-    """
-    读取input_path下名为config_wafer.txt的文件，按行生成yml文件到output_path。
-    yml文件命名为<config>_<行号（六位整数）>_network.yml。
-    yml内容格式见函数说明。
-    """
-    input_file = os.path.join(input_path, f"{config}_wafer.txt")
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-    with open(input_file, 'r') as f:
-        for idx, line in enumerate(f, 1):
-            parts = line.strip().split()
-            if len(parts) < 32:
-                continue  # 跳过格式不对的行
-            rows = int(parts[5])
-            columns = int(parts[6])
-            mem_bandwidth = float(parts[30])
-            communication_bandwidth = float(parts[31]) / 4
-            yml_content = (
-                "topology: [Ring, Ring]\n"
-                f"npus_count: [{columns}, {rows}]\n"
-                f"bandwidth: [{communication_bandwidth}, {communication_bandwidth}]\n"
-                "latency: [10.0, 10.0]\n"
-            )
-            yml_filename = f"{config}_{idx-1:06d}_network.yml"
-            yml_path = os.path.join(output_path, yml_filename)
-            with open(yml_path, 'w') as yml_file:
-                yml_file.write(yml_content) 
+    """Backward-compatible wrapper."""
+    wafer_file = os.path.join(input_path, f"{config}_Wafer.txt")
+    generate_network_yml_from_wafer_file(wafer_file, output_path)
 
-if __name__ == '__main__':
 
-    input_path = "/data/login_home/lijinxi/error_tolerance/output/wafer"
-    config = "0060"
+if __name__ == "__main__":
+    wafer_file = "/data/login_home/lijinxi/error_tolerance/output/0070/0070_Wafer.txt"
     output_path = "/data/login_home/lijinxi/error_tolerance/output/network"
-    generate_network_yml(config=config, input_path=input_path, output_path=output_path)
+    generate_network_yml_from_wafer_file(wafer_file=wafer_file, output_path=output_path)

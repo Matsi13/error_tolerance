@@ -1,0 +1,114 @@
+wafer length (mm):
+220
+wafer width (mm):
+220
+die padding (mm):
+0.1
+global bandwidth per area (GB/s/mm2):
+12.0
+memory bandwidth ratio (0-1):
+0.75
+relaxation factor:
+0.02
+threshold min_TFLOPS:
+12000.0
+threshold min_SRAM_capacity (GB):
+64.0
+threshold min_DRAM_capacity (GB):
+512.0
+threshold min_memory_bandwidth (GB/s):
+25000.0
+threshold min_communication_bandwidth (GB/s):
+10000.0
+available compute chip types:
+2
+TFLOPS_per_area (AI-Core-Optimized):
+0.65
+SRAM_capacity_per_area (GB/mm2):
+0.00022
+length_min stride length_max:
+12.0 4.0 24.0
+width_min stride width_max:
+12.0 4.0 24.0
+padding:
+0.05
+TFLOPS_per_area (Compute-Dense):
+0.85
+SRAM_capacity_per_area (GB/mm2):
+0.00010
+length_min stride length_max:
+10.0 5.0 25.0
+width_min stride width_max:
+10.0 5.0 25.0
+padding:
+0.08
+available memory unit types:
+5
+capacity_per_area (HBM3-Peripheral-High-BW):
+0.24
+memory_bandwidth_per_length (GB/s/mm):
+82.0
+length_min stride length_max:
+10.0 1.0 11.0
+width_min stride width_max:
+10.0 1.0 11.0
+padding:
+0.15
+capacity_per_area (HBM2e-Capacity-Optimized):
+0.18
+memory_bandwidth_per_length (GB/s/mm):
+45.0
+length_min stride length_max:
+10.0 2.0 12.0
+width_min stride width_max:
+10.0 2.0 12.0
+padding:
+0.1
+capacity_per_area (eDRAM-On-Wafer-Buffer):
+0.015
+memory_bandwidth_per_length (GB/s/mm):
+150.0
+length_min stride length_max:
+5.0 2.5 15.0
+width_min stride width_max:
+5.0 2.5 15.0
+padding:
+0.05
+capacity_per_area (MRAM-Non-Volatile-Weight-Store):
+0.045
+memory_bandwidth_per_length (GB/s/mm):
+25.0
+length_min stride length_max:
+4.0 4.0 12.0
+width_min stride width_max:
+4.0 4.0 12.0
+padding:
+0.02
+capacity_per_area (Ultra-Dense-SRAM-Cache-Tile):
+0.0035
+memory_bandwidth_per_length (GB/s/mm):
+450.0
+length_min stride length_max:
+2.0 2.0 10.0
+width_min stride width_max:
+2.0 2.0 10.0
+padding:
+0.01
+available communication unit types:
+2
+bandwidth_per_edge_length (InFO-Interconnect):
+110.0
+length_min stride length_max:
+1.0 0.5 2.0
+width_min stride width_max:
+4.0 4.0 20.0
+padding:
+0.05
+bandwidth_per_edge_length (Standard-Bus):
+65.0
+length_min stride length_max:
+1.0 1.0 2.0
+width_min stride width_max:
+2.0 2.0 10.0
+padding:
+0.05

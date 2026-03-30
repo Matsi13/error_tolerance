@@ -60,8 +60,8 @@ int main(){
     error.TFLOPS_negative = 0.2;
     error.SRAM_capacity_positive = 0.2;
     error.SRAM_capacity_negative = 0.2;
-    error.DRAM_capacity_positive = 0.2;
-    error.DRAM_capacity_negative = 0.2;
+    error.on_die_mem_capacity_positive = 0.2;
+    error.on_die_mem_capacity_negative = 0.2;
     error.memory_bandwidth_positive = 0.2;
     error.memory_bandwidth_negative = 0.2;
     error.communication_bandwidth_positive = 0.2;

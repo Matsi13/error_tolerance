@@ -10,7 +10,9 @@
 
 using namespace std;
 
-void Possible_optimal_wafers(Workload workload, list<Wafer> &wafers, list<Wafer> &optimals, Workload_error error, float off_wafer_bandwidth){
+void Possible_optimal_wafers(Workload workload, list<Wafer> &wafers, list<Wafer> &optimals, Workload_error error, float HBM_bandwidth){
+    // HBM_bandwidth: off-wafer HBM bandwidth (GB/s), used when on-die memory capacity
+    // is insufficient to hold the full model/KV-cache working set.
 
     float TFLOPs = workload.get_TFLOPs();
     float paramsize = workload.get_paramsize();
@@ -34,23 +36,23 @@ void Possible_optimal_wafers(Workload workload, list<Wafer> &wafers, list<Wafer>
         Exec_time_range exec_time_range;
         Wafer wafer = *it;
         float TFLOPS = wafer.get_TFLOPS();
-        float DRAM_capacity = wafer.get_DRAM_capacity();
+        float on_die_mem_capacity = wafer.get_on_die_mem_capacity();
         float memory_bandwidth = wafer.get_memory_bandwidth();
         float communication_bandwidth = wafer.get_communication_bandwidth();
 
         float compute_time_standard = TFLOPs/TFLOPS;
-        float access_time_standard = ( (DRAM_capacity >= paramsize) ? (access / memory_bandwidth) : (access * DRAM_capacity / paramsize / memory_bandwidth + access * (1 - DRAM_capacity / paramsize) / off_wafer_bandwidth) ); 
+        float access_time_standard = ( (on_die_mem_capacity >= paramsize) ? (access / memory_bandwidth) : (access * on_die_mem_capacity / paramsize / memory_bandwidth + access * (1 - on_die_mem_capacity / paramsize) / HBM_bandwidth) ); 
         float communication_time_standard = traffic / communication_bandwidth;
         exec_time_range.time_standard = max(max(compute_time_standard, access_time_standard), communication_time_standard);
 
         float compute_time_min = TFLOPs_min / TFLOPS;
         
-        float access_time_min = ((DRAM_capacity >= paramsize_min) ? (access_min / memory_bandwidth) : (access_min * DRAM_capacity / paramsize_min / memory_bandwidth + access_min * (1 - DRAM_capacity / paramsize_min) / off_wafer_bandwidth) ); 
+        float access_time_min = ((on_die_mem_capacity >= paramsize_min) ? (access_min / memory_bandwidth) : (access_min * on_die_mem_capacity / paramsize_min / memory_bandwidth + access_min * (1 - on_die_mem_capacity / paramsize_min) / HBM_bandwidth) ); 
         float communication_time_min = traffic * (1 + error.traffic_negative) / communication_bandwidth;
         exec_time_range.time_min = max(max(compute_time_min, access_time_min), communication_time_min);
 
         float compute_time_max = TFLOPs_max / TFLOPS;
-        float access_time_max = ((DRAM_capacity >= paramsize_max) ? (access_max / memory_bandwidth) : (access_max * DRAM_capacity / paramsize_max / memory_bandwidth + access_max * (1 - DRAM_capacity / paramsize_max) / off_wafer_bandwidth) ); 
+        float access_time_max = ((on_die_mem_capacity >= paramsize_max) ? (access_max / memory_bandwidth) : (access_max * on_die_mem_capacity / paramsize_max / memory_bandwidth + access_max * (1 - on_die_mem_capacity / paramsize_max) / HBM_bandwidth) ); 
         float communication_time_max = traffic * (1 + error.traffic_positive) / communication_bandwidth;
         exec_time_range.time_max = max(max(compute_time_max, access_time_max), communication_time_max);
 

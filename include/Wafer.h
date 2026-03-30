@@ -5,18 +5,23 @@
 
 using namespace std;
 
+// Memory hierarchy modelled inside Wafer (aggregated over all dies):
+//   SRAM_capacity       - total on-core SRAM across all dies
+//   on_die_mem_capacity - total on-die eDRAM/SRAM chiplet capacity across all dies
+//   HBM                 - off-wafer; NOT modelled here
+
 class Wafer{
     public:
         Wafer(){};
         Wafer(float* sizes, Die& die);
         Wafer(const Wafer& obj);
         Wafer& operator = (const Wafer &obj);
-        void print(); // print the solution for later visulization
+        void print(); // print the solution for later visualisation
 
         const float get_size(int idx)const; 
         const float get_TFLOPS()const;
-        const float get_SRAM_capacity()const;
-        const float get_DRAM_capacity()const;
+        const float get_SRAM_capacity()const;         // total on-core SRAM
+        const float get_on_die_mem_capacity()const;   // total on-die eDRAM/SRAM chiplet capacity
         const float get_memory_bandwidth()const;
         const float get_communication_bandwidth()const;
         const int get_rows()const;
@@ -28,8 +33,8 @@ class Wafer{
     private:
         float sizes[2];
         float TFLOPS;
-        float SRAM_capacity;
-        float DRAM_capacity;
+        float SRAM_capacity;        // total on-core SRAM across all dies
+        float on_die_mem_capacity;  // total on-die eDRAM/SRAM chiplet capacity across all dies
         float memory_bandwidth;
         float communication_bandwidth;
         Die die;

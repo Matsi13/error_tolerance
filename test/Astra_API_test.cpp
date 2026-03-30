@@ -20,7 +20,7 @@ using namespace std;
 int main(){
 
     float freq = 1e9; // Hz
-    float off_chip_bandwidth_per_die = 4; // GB/s
+    float HBM_bandwidth_per_die = 4; // GB/s  (off-wafer HBM bandwidth per die)
     float param_count = 5e9; // lamma 5B
     float batch_size = 128;
     float prompt_avg = 128;
@@ -70,7 +70,7 @@ int main(){
     }
 
 
-    astra_API(freq, off_chip_bandwidth_per_die, TFLOPs, model_size, kv_cache_size, traffic, solutions, path_workload, path_physical_network, config);
+    astra_API(freq, HBM_bandwidth_per_die, TFLOPs, model_size, kv_cache_size, traffic, solutions, path_workload, path_physical_network, config);
 
     return 0;
 }

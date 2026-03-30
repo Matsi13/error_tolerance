@@ -69,7 +69,7 @@ void test_initial_wafer_generation() {
     wafer_config.relaxation = 0.0f;
     wafer_config.threshold.TFLOPS = 0.0f;
     wafer_config.threshold.SRAM_capacity = 0.0f;
-    wafer_config.threshold.DRAM_capacity = 0.0f;
+    wafer_config.threshold.on_die_mem_capacity = 0.0f;
     wafer_config.threshold.memory_bandwidth = 0.0f;
     wafer_config.threshold.communication_bandwidth = 0.0f;
     
@@ -118,7 +118,7 @@ void test_neighbor_generation() {
     wafer_config.relaxation = 0.0f;
     wafer_config.threshold.TFLOPS = 0.0f;
     wafer_config.threshold.SRAM_capacity = 0.0f;
-    wafer_config.threshold.DRAM_capacity = 0.0f;
+    wafer_config.threshold.on_die_mem_capacity = 0.0f;
     wafer_config.threshold.memory_bandwidth = 0.0f;
     wafer_config.threshold.communication_bandwidth = 0.0f;
     
@@ -169,7 +169,7 @@ void test_simulated_annealing() {
     wafer_config.relaxation = 0.0f;
     wafer_config.threshold.TFLOPS = 0.0f;
     wafer_config.threshold.SRAM_capacity = 0.0f;
-    wafer_config.threshold.DRAM_capacity = 0.0f;
+    wafer_config.threshold.on_die_mem_capacity = 0.0f;
     wafer_config.threshold.memory_bandwidth = 0.0f;
     wafer_config.threshold.communication_bandwidth = 0.0f;
     

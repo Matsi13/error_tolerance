@@ -1,34 +1,26 @@
-import os
+﻿import os
 import json
+from wafer_utils import extract_config, load_wafer_file, ensure_dir, out_filename
+
+
+def generate_logical_network_json_from_wafer_file(wafer_file: str, output_path: str):
+    config = extract_config(wafer_file)
+    ensure_dir(output_path)
+    for entry in load_wafer_file(wafer_file):
+        json_data = {"logical-dims": [str(entry.columns), str(entry.rows)]}
+        filename = out_filename(config, entry.idx, "logical_network.json")
+        with open(os.path.join(output_path, filename), "w") as f:
+            json.dump(json_data, f, indent=2)
+        print(f"Generated: {filename}")
+
 
 def generate_logical_network_json(config: str, input_path: str, output_path: str):
-    """
-    读取input_path下名为config_wafer.txt的文件，按行生成json文件到output_path。
-    json文件命名为<config>_<行号（六位整数）>_logical.json。
-    只包含logical-dims: [rows, columns]，均为字符串。
-    """
-    input_file = os.path.join(input_path, f"{config}_wafer.txt")
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-    with open(input_file, 'r') as f:
-        for idx, line in enumerate(f, 1):
-            parts = line.strip().split()
-            if len(parts) < 7:
-                continue  # 跳过格式不对的行
-            rows = str(parts[5])
-            columns = str(parts[6])
-            json_data = {
-                "logical-dims": [rows, columns]
-            }
-            json_filename = f"{config}_{idx-1:06d}_logical_network.json"
-            json_path = os.path.join(output_path, json_filename)
-            with open(json_path, 'w') as json_file:
-                json.dump(json_data, json_file, indent=2) 
+    """Backward-compatible wrapper."""
+    wafer_file = os.path.join(input_path, f"{config}_Wafer.txt")
+    generate_logical_network_json_from_wafer_file(wafer_file, output_path)
 
 
-if __name__ == '__main__':
-
-    input_path = "/data/login_home/lijinxi/error_tolerance/output/wafer"
-    config = "0060"
+if __name__ == "__main__":
+    wafer_file = "/data/login_home/lijinxi/error_tolerance/output/0070/0070_Wafer.txt"
     output_path = "/data/login_home/lijinxi/error_tolerance/output/logical_network"
-    generate_logical_network_json(config=config, input_path=input_path, output_path=output_path)
+    generate_logical_network_json_from_wafer_file(wafer_file=wafer_file, output_path=output_path)

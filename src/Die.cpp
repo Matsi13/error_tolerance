@@ -115,9 +115,9 @@ const float Die::get_TFLOPS()const{
 }
 
 
-const float Die::get_DRAM_capacity()const{
+const float Die::get_on_die_mem_capacity()const{
     
-    return DRAM_capacity;
+    return on_die_mem_capacity;
 
 }
 
@@ -207,9 +207,9 @@ void Die::set_TFLOPS(float TFLOPS){
 }
 
 
-void Die::set_DRAM_capacity(float capacity){
+void Die::set_on_die_mem_capacity(float capacity){
 
-    this->DRAM_capacity = capacity;
+    this->on_die_mem_capacity = capacity;
     return;
     
 }
@@ -397,8 +397,9 @@ void Die::update_TFLOPS(){
 }
 
 
-void Die::update_DRAM_capacity(){
-
+void Die::update_on_die_mem_capacity(){
+    // Sums capacity of all on-die eDRAM/SRAM memory chiplets on the four edges.
+    // Off-wafer HBM is not modelled here.
     float capacity = 0;
 
     if (!up.empty()){
@@ -449,7 +450,7 @@ void Die::update_DRAM_capacity(){
 
     }
     
-    set_DRAM_capacity(capacity);
+    set_on_die_mem_capacity(capacity);
     return;
 
 }
@@ -656,7 +657,7 @@ void Die::update(){
 
     update_size(); 
     update_TFLOPS(); 
-    update_DRAM_capacity(); 
+    update_on_die_mem_capacity(); 
     update_SRAM_capacity();
     update_bandwidth();
     apply_d2d_bandwidth_constraints();

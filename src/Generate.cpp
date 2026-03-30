@@ -73,9 +73,9 @@ void Generate(list<Compute>& compute_configs, list<Memory>& memory_configs, list
 
     getline(input, title);
     // cout << title << endl;
-    input >> input_config.threshold.DRAM_capacity;
+    input >> input_config.threshold.on_die_mem_capacity;
     getline(input, title);
-    // cout << input_config.threshold.DRAM_capacity << endl;
+    // cout << input_config.threshold.on_die_mem_capacity << endl;
 
     getline(input, title);
     // cout << title << endl;

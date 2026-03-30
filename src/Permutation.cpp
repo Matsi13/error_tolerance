@@ -252,50 +252,72 @@ void Search_permutation(list<string>& permutation_side, float Compute_size, Memo
 }
 
 
-// return true is first is better than second, vice visa
+// return true if first die produces a better wafer than second die.
+// Total TFLOPS / SRAM / on_die_mem are compared in aggregate (they scale with die count).
+// memory_bandwidth and communication_bandwidth are compared per-die, because bandwidth
+// is a per-compute-unit property: a die with lower per-die bandwidth is worse regardless
+// of how many copies fit on the wafer.
 bool is_better_die(Die& first, Die& second, float wafer_length, float wafer_width){
 
     float first_length = first.get_size(0);
     float first_width = first.get_size(1);
-    int first_count = max(floor(wafer_length / first_length) * floor(wafer_width / first_width), floor(wafer_width / first_length) * floor(wafer_length / first_width));
-    float first_TFLOPS = first.get_TFLOPS() * first_count;
-    float first_SRAM_capacity = first.get_SRAM_capacity() * first_count;
-    float first_DRAM_capacity = first.get_DRAM_capacity() * first_count;
-    float first_memory_bandwidth = first.get_memory_bandwidth() * first_count;
-    float first_communication_bandwidth = first.get_communication_bandwidth() * first_count;
+    int first_count = max(floor(wafer_length / first_length) * floor(wafer_width / first_width),
+                         floor(wafer_width  / first_length) * floor(wafer_length / first_width));
+    float first_TFLOPS             = first.get_TFLOPS()               * first_count;
+    float first_SRAM_capacity      = first.get_SRAM_capacity()        * first_count;
+    float first_on_die_mem_capacity = first.get_on_die_mem_capacity() * first_count;
+    // bandwidth compared per die, not in aggregate
+    float first_memory_bandwidth        = first.get_memory_bandwidth();
+    float first_communication_bandwidth = first.get_communication_bandwidth();
 
     float second_length = second.get_size(0);
     float second_width = second.get_size(1);
-    int second_count = max(floor(wafer_length / second_length) * floor(wafer_width / second_width), floor(wafer_width / second_length) * floor(wafer_length / second_width));
-    float second_TFLOPS = second.get_TFLOPS() * second_count;
-    float second_SRAM_capacity = second.get_SRAM_capacity() * second_count;
-    float second_DRAM_capacity = second.get_DRAM_capacity() * second_count;
-    float second_memory_bandwidth = second.get_memory_bandwidth() * second_count;
-    float second_communication_bandwidth = second.get_communication_bandwidth() * second_count;
+    int second_count = max(floor(wafer_length / second_length) * floor(wafer_width / second_width),
+                          floor(wafer_width  / second_length) * floor(wafer_length / second_width));
+    float second_TFLOPS             = second.get_TFLOPS()               * second_count;
+    float second_SRAM_capacity      = second.get_SRAM_capacity()        * second_count;
+    float second_on_die_mem_capacity = second.get_on_die_mem_capacity() * second_count;
+    // bandwidth compared per die, not in aggregate
+    float second_memory_bandwidth        = second.get_memory_bandwidth();
+    float second_communication_bandwidth = second.get_communication_bandwidth();
 
-    bool is_better = (first_TFLOPS >= second_TFLOPS) && (first_SRAM_capacity >= second_SRAM_capacity)  && (first_DRAM_capacity >= second_DRAM_capacity) && (first_memory_bandwidth >= second_memory_bandwidth) && (first_communication_bandwidth >= second_communication_bandwidth);
+    bool is_better = (first_TFLOPS >= second_TFLOPS)
+                  && (first_SRAM_capacity >= second_SRAM_capacity)
+                  && (first_on_die_mem_capacity >= second_on_die_mem_capacity)
+                  && (first_memory_bandwidth >= second_memory_bandwidth)
+                  && (first_communication_bandwidth >= second_communication_bandwidth);
 
     return is_better;
 
 }
 
-// return true is first is better than second, vice visa
+// return true if first wafer is better than second wafer.
+// Total TFLOPS / SRAM / on_die_mem are compared in aggregate.
+// memory_bandwidth and communication_bandwidth are compared per die, because
+// per-die bandwidth determines actual data movement rate per compute unit.
 bool is_better_wafer(Wafer& first, Wafer& second){
 
-    
-    float first_TFLOPS = first.get_TFLOPS();
-    float first_SRAM_capacity = first.get_SRAM_capacity();
-    float first_DRAM_capacity = first.get_DRAM_capacity();
-    float first_memory_bandwidth = first.get_memory_bandwidth();
-    float first_communication_bandwidth = first.get_communication_bandwidth();
+    float first_TFLOPS              = first.get_TFLOPS();
+    float first_SRAM_capacity       = first.get_SRAM_capacity();
+    float first_on_die_mem_capacity = first.get_on_die_mem_capacity();
+    // per-die bandwidth: divide total by number of dies
+    int   first_die_count = first.get_rows() * first.get_columns();
+    float first_memory_bandwidth        = (first_die_count > 0) ? first.get_memory_bandwidth()        / first_die_count : 0.0f;
+    float first_communication_bandwidth = (first_die_count > 0) ? first.get_communication_bandwidth() / first_die_count : 0.0f;
 
-    float second_TFLOPS = second.get_TFLOPS();
-    float second_SRAM_capacity = second.get_SRAM_capacity();
-    float second_DRAM_capacity = second.get_DRAM_capacity();
-    float second_memory_bandwidth = second.get_memory_bandwidth();
-    float second_communication_bandwidth = second.get_communication_bandwidth();
+    float second_TFLOPS              = second.get_TFLOPS();
+    float second_SRAM_capacity       = second.get_SRAM_capacity();
+    float second_on_die_mem_capacity = second.get_on_die_mem_capacity();
+    // per-die bandwidth: divide total by number of dies
+    int   second_die_count = second.get_rows() * second.get_columns();
+    float second_memory_bandwidth        = (second_die_count > 0) ? second.get_memory_bandwidth()        / second_die_count : 0.0f;
+    float second_communication_bandwidth = (second_die_count > 0) ? second.get_communication_bandwidth() / second_die_count : 0.0f;
 
-    bool is_better = (first_TFLOPS >= second_TFLOPS) && (first_SRAM_capacity >= second_SRAM_capacity) && (first_DRAM_capacity >= second_DRAM_capacity) && (first_memory_bandwidth >= second_memory_bandwidth) && (first_communication_bandwidth >= second_communication_bandwidth);
+    bool is_better = (first_TFLOPS >= second_TFLOPS)
+                  && (first_SRAM_capacity >= second_SRAM_capacity)
+                  && (first_on_die_mem_capacity >= second_on_die_mem_capacity)
+                  && (first_memory_bandwidth >= second_memory_bandwidth)
+                  && (first_communication_bandwidth >= second_communication_bandwidth);
 
     return is_better;
 
@@ -304,7 +326,7 @@ bool is_better_wafer(Wafer& first, Wafer& second){
 
 bool is_over_threshold(Wafer solution, Threshold threshold){
 
-    bool flag = (solution.get_TFLOPS() >= threshold.TFLOPS) && (solution.get_SRAM_capacity() >= threshold.SRAM_capacity) && (solution.get_DRAM_capacity() >= threshold.DRAM_capacity) && (solution.get_memory_bandwidth() >= threshold.memory_bandwidth) && (solution.get_communication_bandwidth() >= threshold.communication_bandwidth);
+    bool flag = (solution.get_TFLOPS() >= threshold.TFLOPS) && (solution.get_SRAM_capacity() >= threshold.SRAM_capacity) && (solution.get_on_die_mem_capacity() >= threshold.on_die_mem_capacity) && (solution.get_memory_bandwidth() >= threshold.memory_bandwidth) && (solution.get_communication_bandwidth() >= threshold.communication_bandwidth);
     return flag;
 
 }

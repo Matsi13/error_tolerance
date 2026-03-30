@@ -75,7 +75,7 @@ int main(){
     error.traffic_negative = 0;
 
     Workload transformer_workload(4e8, 2e9, 2e10, 2e12);
-    float off_wafer_bandwidth = 100;
+    float HBM_bandwidth = 100;
 
     switch (catagory) {
 
@@ -87,7 +87,7 @@ int main(){
                 error.TFLOPs_negative = -negative_flag * i * stride;
                 list<Wafer> possible_optimals;
 
-                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
+                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, HBM_bandwidth);
                 cout << error.TFLOPs_positive << " " << possible_optimals.size() << endl;
 
             }
@@ -104,7 +104,7 @@ int main(){
                 error.paramsize_negative = -negative_flag * i * stride;
                 list<Wafer> possible_optimals;
 
-                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
+                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, HBM_bandwidth);
                 cout << error.paramsize_positive << " " << possible_optimals.size() << endl;
 
             }
@@ -121,7 +121,7 @@ int main(){
                 error.access_negative = -negative_flag * i * stride;
                 list<Wafer> possible_optimals;
 
-                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
+                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, HBM_bandwidth);
                 cout << error.access_positive << " " << possible_optimals.size() << endl;
 
             }
@@ -138,7 +138,7 @@ int main(){
                 error.traffic_negative = -negative_flag * i * stride;
                 list<Wafer> possible_optimals;
 
-                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, off_wafer_bandwidth);
+                Possible_optimal_wafers(transformer_workload, solutions, possible_optimals, error, HBM_bandwidth);
                 cout << error.traffic_positive << " " << possible_optimals.size() << endl;
 
             }

@@ -1,7 +1,7 @@
 wafer length :
-120
+200
 wafer width :
-120
+200
 die padding :
 0.5
 bandwidth per area:
@@ -35,9 +35,9 @@ available memory unit(s) :
 sizes :
 5 5
 DRAM_capacity : 
-4
+4 3
 bandwidth :
-10
+10 8
 padding : 
 0.1
 available communication unit(s) :
